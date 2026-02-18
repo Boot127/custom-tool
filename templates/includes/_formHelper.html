@@ -1,0 +1,47 @@
+{% macro render_field(field, show_label=true) %}
+    {% if field.type == "RadioField" %}
+        <div class="form-group">
+            {% if show_label %}
+                {{ field.label }}
+            {% endif %}
+            <div class="form-check">
+                {% for subfield in field %}
+                    <div class="form-check form-check-inline">
+                        {{ subfield(class="form-check-input") }}
+                        {{ subfield.label(class="form-check-label") }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% elif field.type == "BooleanField" %}
+        <div class="form-check">
+            {{ field(class="form-check-input") }}
+            {{ field.label(class="form-check-label") }}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="form-group">
+            {% if show_label %}
+                {{ field.label }}
+            {% endif %}
+            {{ field(class="form-control" if not field.type in ['RadioField', 'BooleanField'] else "", **kwargs)|safe }}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            {% if field.description %}
+                <small class="form-text text-muted">{{ field.description }}</small>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}

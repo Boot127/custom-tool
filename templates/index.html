@@ -1,0 +1,770 @@
+<!---thylis,251684J,group4-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesignCraft Studio - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wood-light: #E3D5C6;
+            --wood-medium: #D4B896;
+            --wood-dark: #A68A64;
+            --sage-green: #9CAF88;
+            --sage-light: #C8D5B9;
+            --sage-dark: #7A8F72;
+            --neutral-cream: #F5F1EB;
+            --neutral-dark: #3C3C3C;
+            --neutral-light: #FAF7F2;
+            --accent-brown: #8B7355;
+            --gradient-wood: linear-gradient(135deg, #E3D5C6 0%, #D4B896 100%);
+            --gradient-sage: linear-gradient(135deg, #C8D5B9 0%, #9CAF88 100%);
+            --gradient-natural: linear-gradient(135deg, #F5F1EB 0%, #E3D5C6 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            color: var(--neutral-dark);
+            background: var(--neutral-cream);
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--wood-dark);
+        }
+        
+        /* ===== MODERN HEADER ===== */
+        .site-header {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            height: 72px;
+        }
+        
+        /* Logo section */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            margin-right: 48px;
+        }
+        
+        .logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+            color: var(--wood-dark);
+        }
+        
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #333333;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Main navigation */
+        .main-nav {
+            display: flex;
+            gap: 8px;
+            margin-right: auto;
+        }
+        
+        .main-nav a {
+            text-decoration: none;
+            color: #666666;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .main-nav a:hover {
+            color: #333333;
+            background-color: #f8f8f8;
+        }
+        
+        .main-nav a.active {
+            color: #333333;
+            font-weight: 600;
+            background-color: #f0f0f0;
+        }
+        
+        /* Right side navigation */
+        .right-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .right-nav a {
+            text-decoration: none;
+            color: #555555;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .right-nav a:hover {
+            color: #333333;
+        }
+        
+        .right-nav i {
+            font-size: 18px;
+        }
+        
+        /* Cart counter */
+        .cart-counter {
+            background: #e74c3c;
+            color: white;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+        
+        .icon-with-counter {
+            position: relative;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #333333;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            padding-top: 140px;
+            padding-bottom: 100px;
+            background: linear-gradient(135deg, #f9f7f3 0%, #f0ece4 100%);
+            text-align: center;
+            border-bottom: 1px solid #eae3d7;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--wood-dark);
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .hero-btn {
+            padding: 16px 36px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .hero-btn.primary {
+            background: var(--wood-dark);
+            color: white;
+        }
+        
+        .hero-btn.primary:hover {
+            background: var(--accent-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 115, 85, 0.3);
+        }
+        
+        .hero-btn.secondary {
+            background: white;
+            color: var(--wood-dark);
+            border: 2px solid var(--wood-light);
+        }
+        
+        .hero-btn.secondary:hover {
+            background: var(--wood-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* ===== FEATURES SECTION ===== */
+        .features-section {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 60px;
+            color: var(--wood-dark);
+            text-align: center;
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--sage-green);
+            border-radius: 2px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: var(--neutral-light);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 2px solid var(--wood-light);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card:hover {
+            border-color: var(--sage-green);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(154, 175, 136, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            color: var(--wood-dark);
+            margin-bottom: 24px;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--wood-dark);
+            margin-bottom: 16px;
+        }
+        
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--sage-light) 0%, var(--sage-green) 100%);
+            text-align: center;
+            color: white;
+        }
+        
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .cta-title {
+            font-size: 42px;
+            margin-bottom: 24px;
+            color: white;
+        }
+        
+        .cta-text {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .cta-btn {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--sage-dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .cta-btn:hover {
+            background: var(--neutral-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--wood-dark);
+            color: white;
+            padding: 48px 0;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 8px;
+        }
+        
+        .footer p:last-child {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        /* ===== WOOD TEXTURE BACKGROUND ===== */
+        .wood-texture {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a68a64' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--sage-green);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.hidden {
+            display: none;
+        }
+        
+        .notification-icon {
+            font-size: 20px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                height: 64px;
+                padding: 0 16px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                margin-left: auto;
+            }
+            
+            .main-nav, .right-nav {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 999;
+                gap: 16px;
+            }
+            
+            .main-nav {
+                top: 64px;
+                padding-top: 24px;
+            }
+            
+            .right-nav {
+                top: 180px;
+                padding-bottom: 24px;
+            }
+            
+            .main-nav.active, .right-nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .hero-section {
+                padding-top: 120px;
+                padding-bottom: 80px;
+            }
+            
+            .hero-title {
+                font-size: 40px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .logo-section {
+                margin-right: 0;
+            }
+            
+            .logo-text {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .cta-title {
+                font-size: 32px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+            
+            .logo-text {
+                font-size: 16px;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            .cta-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body class="wood-texture">
+    <!-- Header Navigation -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-section">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <div class="logo-text">DesignCraft Studio</div>
+                </a>
+            </div>
+            
+            <!-- Main Navigation -->
+            <nav class="main-nav" id="mainNav">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="products.html" class="nav-link">Products</a>
+            </nav>
+            
+            <!-- Right Navigation -->
+            <nav class="right-nav" id="rightNav">
+                <a href="cart.html" class="nav-link icon-with-counter">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-counter" id="cartCounter">0</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-user"></i>
+                </a>
+            </nav>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title">DesignCraft Studio</h1>
+            <p class="hero-subtitle">Create custom-designed T-shirts, mugs, hoodies, and more with our easy-to-use design tools. High-quality products crafted with care and delivered to your door.</p>
+            <div class="hero-actions">
+                <a href="products.html" class="hero-btn primary">
+                    <i class="fas fa-shopping-bag"></i> Browse Products
+                </a>
+                <button class="hero-btn secondary" id="createDesignBtn">
+                    <i class="fas fa-paint-brush"></i> Start Creating
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <h2 class="section-title">Why Choose DesignCraft Studio?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="feature-title">Easy Design Tools</h3>
+                    <p class="feature-description">Create stunning designs with our intuitive online editor. No design experience needed!</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="feature-title">Fast Shipping</h3>
+                    <p class="feature-description">Get your custom products delivered quickly. Most orders ship within 2-3 business days.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3 class="feature-title">Premium Quality</h3>
+                    <p class="feature-description">We use only the highest quality materials for durable, long-lasting products.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Create Something Unique?</h2>
+            <p class="cta-text">Start designing your custom products today. Upload your own design or create one from scratch with our tools.</p>
+            <a href="products.html" class="cta-btn">
+                <i class="fas fa-shopping-bag"></i> Shop Now
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2023 DesignCraft Studio. All rights reserved.</p>
+        <p>Crafted with care using natural, sustainable materials.</p>
+    </footer>
+    
+    <!-- Notification -->
+    <div class="notification hidden" id="notification">
+        <div class="notification-icon" id="notificationIcon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-text" id="notificationText">Action completed successfully!</div>
+    </div>
+
+    <script>
+    // DOM Elements
+    const notification = document.getElementById('notification');
+    const notificationIcon = document.getElementById('notificationIcon');
+    const notificationText = document.getElementById('notificationText');
+    const mainNav = document.getElementById('mainNav');
+    const rightNav = document.getElementById('rightNav');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const createDesignBtn = document.getElementById('createDesignBtn');
+    const cartCounter = document.getElementById('cartCounter');
+    
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        mainNav.classList.toggle('active');
+        rightNav.classList.toggle('active');
+    }
+    
+    // Close mobile menu
+    function closeMobileMenu() {
+        mainNav.classList.remove('active');
+        rightNav.classList.remove('active');
+    }
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+        notificationText.textContent = message;
+        
+        if (type === 'success') {
+            notificationIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            notification.style.background = 'linear-gradient(135deg, var(--sage-green) 0%, var(--sage-dark) 100%)';
+        } else if (type === 'error') {
+            notificationIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            notification.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        } else if (type === 'info') {
+            notificationIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            notification.style.background = 'linear-gradient(135deg, var(--wood-medium) 0%, var(--wood-dark) 100%)';
+        }
+        
+        notification.classList.remove('hidden');
+        
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 3000);
+    }
+    
+    // Update cart counter from localStorage
+    function updateCartCounter() {
+        const savedCart = localStorage.getItem('designcraftCart');
+        const cartItems = savedCart ? JSON.parse(savedCart) : [];
+        const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+        cartCounter.textContent = itemCount;
+        cartCounter.style.display = itemCount > 0 ? 'flex' : 'none';
+    }
+    
+    // Initialize event listeners
+    function initEventListeners() {
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        
+        // Only prevent default for unimplemented pages
+        document.querySelectorAll('.nav-link[href="#"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('This page is not implemented yet!', 'info');
+                closeMobileMenu();
+            });
+        });
+        
+        // For other nav links, just close mobile menu
+        document.querySelectorAll('.nav-link[href!="#"]').forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileMenu();
+            });
+        });
+        
+        // Cart icon
+        const cartIcon = document.querySelector('.right-nav a:nth-child(1)');
+        if (cartIcon) {
+            cartIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification(`Opening cart`, 'info');
+                closeMobileMenu();
+            });
+        }
+        
+        // User icon
+        const userIcon = document.querySelector('.right-nav a:nth-child(3)');
+        if (userIcon) {
+            userIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification(`Opening user account`, 'info');
+                closeMobileMenu();
+            });
+        }
+        
+        // Create design button
+        if (createDesignBtn) {
+            createDesignBtn.addEventListener('click', () => {
+                showNotification('Opening design studio!', 'success');
+                setTimeout(() => {
+                    alert('This would open the design studio where you can create custom designs.');
+                }, 500);
+            });
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.main-nav') && !e.target.closest('.right-nav') && !e.target.closest('.mobile-menu-btn') && 
+                (mainNav.classList.contains('active') || rightNav.classList.contains('active'))) {
+                closeMobileMenu();
+            }
+        });
+    }
+    
+    // Initialize everything when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCartCounter();
+        initEventListeners();
+        
+        // Show welcome message
+        setTimeout(() => {
+            showNotification('Welcome to DesignCraft Studio!', 'info');
+        }, 1000);    });
+    </script>
+</body>
+</html>

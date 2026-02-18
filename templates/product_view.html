@@ -1,0 +1,235 @@
+<!-- Thylis, 251684J, group 4 -->
+{% extends "base_admin.html" %}
+
+{% block title %}Product #{{ product[0] }} - View Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-eye me-2"></i> Product Details</h2>
+        <div>
+            <a href="{{ url_for('products.edit_product', product_id=product[0]) }}" class="btn btn-primary">
+                <i class="fas fa-edit me-1"></i> Edit Product
+            </a>
+            <a href="{{ url_for('products.admin_products') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Products
+            </a>
+        </div>
+    </div>
+
+    <!-- Product Information Card -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-box me-2"></i> Product Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            {% if product[8] and product[8]|trim %}
+                                {% if product[8].startswith('http://') or product[8].startswith('https://') %}
+                                    <img src="{{ product[8] }}" alt="{{ product[1] }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-height: 400px; width: 100%; object-fit: contain; border: 1px solid #dee2e6;"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\'%3E%3Crect fill=\'%23f8f9fa\' width=\'400\' height=\'400\'/%3E%3Ctext fill=\'%23999\' font-family=\'sans-serif\' font-size=\'20\' dy=\'10.5\' font-weight=\'bold\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3ENo Image%3C/text%3E%3C/svg%3E';">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename=product[8]) }}" alt="{{ product[1] }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-height: 400px; width: 100%; object-fit: contain; border: 1px solid #dee2e6;"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'400\'%3E%3Crect fill=\'%23f8f9fa\' width=\'400\' height=\'400\'/%3E%3Ctext fill=\'%23999\' font-family=\'sans-serif\' font-size=\'20\' dy=\'10.5\' font-weight=\'bold\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\'%3ENo Image%3C/text%3E%3C/svg%3E';">
+                                {% endif %}
+                            {% else %}
+                                <div class="d-flex align-items-center justify-content-center bg-light rounded" 
+                                     style="height: 400px; border: 1px solid #dee2e6;">
+                                    <i class="fas fa-box fa-5x text-muted"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h3 class="mb-3">{{ product[1] }}</h3>
+                            
+                            <div class="mb-3">
+                                <span class="badge bg-primary fs-6">{{ product[3]|title }}</span>
+                                {% if product[10] == 1 %}
+                                    <span class="badge bg-success fs-6">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary fs-6">Inactive</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h4 class="text-primary mb-0">${{ "%.2f"|format(product[4]) }}</h4>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Stock:</strong>
+                                {% if product[5] > 10 %}
+                                    <span class="badge bg-success">{{ product[5] }} in stock</span>
+                                {% elif product[5] > 0 %}
+                                    <span class="badge bg-warning">{{ product[5] }} left</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Out of stock</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Product ID:</strong> #{{ product[0] }}
+                            </div>
+                            
+                            {% if product[11] %}
+                            <div class="mb-3">
+                                <strong>Created:</strong> {{ (product[11]|string)[:10] }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <h5><i class="fas fa-align-left me-2"></i> Description</h5>
+                        <p class="text-muted">{{ product[2] if product[2] else 'No description available.' }}</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-palette me-2"></i> Available Colors</h5>
+                            {% if product[6] and product[6]|trim %}
+                                {% set colors = product[6].split(',') %}
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for color in colors %}
+                                        {% if color|trim %}
+                                            <span class="badge bg-info">{{ color|trim|title }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No colors specified</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-ruler me-2"></i> Available Sizes</h5>
+                            {% if product[7] and product[7]|trim %}
+                                {% set sizes = product[7].split(',') %}
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for size in sizes %}
+                                        {% if size|trim %}
+                                            <span class="badge bg-secondary">{{ size|trim|upper }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No sizes specified</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> Statistics</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats %}
+                        {% if stats is mapping %}
+                            {% if stats.total_orders %}
+                                <div class="mb-3">
+                                    <strong>Total Orders:</strong>
+                                    <span class="badge bg-primary float-end">{{ stats.total_orders }}</span>
+                                </div>
+                            {% endif %}
+                            {% if stats.total_quantity_sold %}
+                                <div class="mb-3">
+                                    <strong>Quantity Sold:</strong>
+                                    <span class="badge bg-success float-end">{{ stats.total_quantity_sold }}</span>
+                                </div>
+                            {% endif %}
+                            {% if stats.total_revenue %}
+                                <div class="mb-3">
+                                    <strong>Total Revenue:</strong>
+                                    <span class="badge bg-success float-end">${{ "%.2f"|format(stats.total_revenue) }}</span>
+                                </div>
+                            {% endif %}
+                            {% if stats.average_rating %}
+                                <div class="mb-3">
+                                    <strong>Average Rating:</strong>
+                                    <span class="badge bg-warning float-end">{{ "%.1f"|format(stats.average_rating) }}/5</span>
+                                </div>
+                            {% endif %}
+                            {% if stats.review_count %}
+                                <div class="mb-3">
+                                    <strong>Reviews:</strong>
+                                    <span class="badge bg-info float-end">{{ stats.review_count }}</span>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-muted">Statistics data available</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted">No statistics available yet</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Actions Card -->
+            <div class="card mt-3">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('products.edit_product', product_id=product[0]) }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i> Edit Product
+                        </a>
+                        
+                        <form method="POST" action="{{ url_for('products.toggle_product_status', product_id=product[0]) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-{% if product[10] == 1 %}warning{% else %}success{% endif %} w-100">
+                                <i class="fas fa-{% if product[10] == 1 %}ban{% else %}check{% endif %} me-2"></i>
+                                {% if product[10] == 1 %}Deactivate{% else %}Activate{% endif %} Product
+                            </button>
+                        </form>
+                        
+                        <form method="POST" action="{{ url_for('products.delete_product', product_id=product[0]) }}" 
+                              class="d-inline delete-product-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash me-2"></i> Delete Product
+                            </button>
+                        </form>
+                        
+                        <a href="{{ url_for('products.product_detail', product_id=product[0]) }}" 
+                           class="btn btn-outline-info" target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i> View on Site
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delete confirmation
+        const deleteForm = document.querySelector('.delete-product-form');
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function(e) {
+                const productName = '{{ product[1] }}';
+                
+                if (!confirm(`Are you sure you want to delete product "${productName}"?\n\nThis will permanently delete:\n• Product details\n• Product images\n• All associated data\n\nThis action cannot be undone!`)) {
+                    e.preventDefault();
+                    return false;
+                }
+                return true;
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,155 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block title %}Admin Login - Custom Design Studio{% endblock %}
+
+{% block head %}
+<style>
+    .admin-login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+    
+    .admin-login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+        max-width: 400px;
+        width: 100%;
+    }
+    
+    .admin-login-header {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .admin-login-body {
+        padding: 40px;
+    }
+    
+    .admin-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+    
+    .admin-back-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .btn-admin {
+        background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        border: none;
+        padding: 12px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        color: white;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+    }
+    
+    .security-note {
+        background: #f8fafc;
+        border-left: 4px solid #2563eb;
+        padding: 10px 15px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-login-container">
+    <div class="admin-login-card">
+        <div class="admin-login-header">
+            <div class="admin-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>Admin Login</h2>
+            <p class="mb-0">Custom Design Studio Control Panel</p>
+        </div>
+        
+        <div class="admin-login-body">
+            <form method="POST" action="{{ url_for('admin.admin_login') }}">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Username or Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-user text-primary"></i>
+                        </span>
+                        {{ render_field(form.username, class="form-control border-start-0", placeholder="admin username", show_label=false) }}
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-lock text-primary"></i>
+                        </span>
+                        {{ render_field(form.password, class="form-control border-start-0", placeholder="••••••••", show_label=false) }}
+                        <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="form-check">
+                        {{ render_field(form.remember_me, class="form-check-input") }}
+                        <label class="form-check-label" for="rememberMe">
+                            Keep me logged in
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-admin mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login as Admin
+                </button>
+                
+                <div class="security-note">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Security Notice:</strong> This panel is for authorized personnel only.
+                </div>
+            </form>
+            
+            <div class="admin-back-link">
+                <a href="{{ url_for('home') }}" class="text-decoration-none">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Main Site
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        }
+    });
+    
+    document.querySelector('form').addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Authenticating...';
+        btn.disabled = true;
+    });
+</script>
+{% endblock %}

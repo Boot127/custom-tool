@@ -1,0 +1,492 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+
+{% block title %}My Profile - DesignCraft Studio{% endblock %}
+
+{% block head %}
+<style>
+    .profile-container {
+        padding: 2rem 0;
+    }
+    
+    .profile-section {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--wood-light);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .section-header {
+        background: var(--gradient-natural);
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        border-bottom: 1px solid var(--wood-light);
+        transition: all 0.3s ease;
+    }
+    
+    .section-header:hover {
+        background: var(--wood-light);
+    }
+    
+    .section-header h5 {
+        margin: 0;
+        color: var(--wood-dark);
+        font-weight: 600;
+    }
+    
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-sage);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: white;
+    }
+    
+    .section-content {
+        padding: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+    
+    .info-card {
+        background: var(--neutral-cream);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--wood-light);
+    }
+    
+    .info-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: var(--wood-dark);
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .info-value {
+        color: var(--neutral-dark);
+        font-size: 1.1rem;
+    }
+    
+    .purchase-columns {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+    
+    .purchase-column {
+        background: var(--neutral-cream);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .purchase-column h6 {
+        color: var(--wood-dark);
+        border-bottom: 2px solid var(--sage-green);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .purchase-item {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .purchase-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--neutral-dark);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--wood-light);
+        margin-bottom: 1rem;
+    }
+    
+    .edit-btn {
+        margin-top: 1.5rem;
+    }
+    
+    .arrow-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .collapsed .arrow-icon {
+        transform: rotate(180deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-user-circle me-2"></i> My Profile</h2>
+        <span class="badge bg-primary">Welcome, {{ session.username }}</span>
+    </div>
+    
+    <!-- Personal Details Section -->
+    <div class="profile-section">
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#personalDetails">
+            <div class="d-flex align-items-center">
+                <div class="section-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h5>Personal Details</h5>
+            </div>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <div class="collapse show" id="personalDetails">
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-item">
+                            <div class="info-label">Username</div>
+                            <div class="info-value">{{ user_data[1] if user_data[1] else 'Not set' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">{{ user_data[2] if user_data[2] else 'Not set' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-item">
+                            <div class="info-label">Date of Birth</div>
+                            <div class="info-value">{{ user_data[5] if user_data[5] else 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">{{ user_data[6] if user_data[6] else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-btn">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i> Edit Personal Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Address Section -->
+    <div class="profile-section">
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#addressSection">
+            <div class="d-flex align-items-center">
+                <div class="section-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h5>Address</h5>
+            </div>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <div class="collapse" id="addressSection">
+            <div class="section-content">
+                {% if user_data[7] %}
+                <div class="info-card">
+                    <div class="info-item">
+                        <div class="info-label">Your Shipping Address</div>
+                        <div class="info-value" style="white-space: pre-line;">{{ user_data[7] }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h5>No Address Provided</h5>
+                    <p class="text-muted">You haven't added an address yet.</p>
+                </div>
+                {% endif %}
+                <div class="edit-btn">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i> Edit Address
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- My Purchases Section -->
+    <!-- My Purchases Section -->
+    <div class="profile-section">
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#purchasesSection">
+            <div class="d-flex align-items-center">
+                <div class="section-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <h5>My Purchases</h5>
+            </div>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <div class="collapse show" id="purchasesSection">
+            <div class="section-content">
+                {% if orders %}
+                <div class="purchase-columns">
+                    {% for order in orders %}
+                    <div class="purchase-item">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">Order #{{ order[0] }}</h6>
+                            <span class="badge bg-{% if order[5] == 'pending' %}warning{% else %}success{% endif %}">{{ order[5]|title }}</span>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Date</div>
+                            <div class="info-value">{{ order[4][:10] if order[4] else 'N/A' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Total</div>
+                            <div class="info-value fw-bold">${{ "%.2f"|format(order[2]) }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Ship to</div>
+                            <div class="info-value">{{ order[3][:50] if order[3] else '' }}{% if order[3] and order[3]|length > 50 %}...{% endif %}</div>
+                        </div>
+                        <a href="{{ url_for('order_confirmation', order_id=order[0]) }}" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-eye me-1"></i> View Details
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state text-center">
+                    <i class="fas fa-shopping-bag fa-3x mb-4" style="color: var(--wood-light);"></i>
+                    <h5>No Purchases Yet</h5>
+                    <p class="text-muted mb-4">When you make purchases, they will appear here.</p>
+                    <a href="{{ url_for('products.browse_products') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag me-2"></i>Browse Products
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Change Password Section -->
+    <div class="profile-section">
+        <div class="section-header" data-bs-toggle="collapse" data-bs-target="#passwordSection">
+            <div class="d-flex align-items-center">
+                <div class="section-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h5>Account Security</h5>
+            </div>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </div>
+        <div class="collapse" id="passwordSection">
+            <div class="section-content">
+                <div class="info-card">
+                    <div class="info-item">
+                        <div class="info-label">Password</div>
+                        <div class="info-value">••••••••••••</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Last Changed</div>
+                        <div class="info-value">January 1, 2024</div>
+                    </div>
+                </div>
+                <div class="edit-btn">
+                    <a href="{{ url_for('change_password') }}" class="btn btn-primary">
+                        <i class="fas fa-key me-2"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Delete Account Confirmation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Warning: This action is permanent and irreversible!</strong>
+                </div>
+                
+                <h6 class="mb-3">What you will lose permanently:</h6>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        All profile information and personal data
+                    </li>
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        All designs, customization projects, and saved templates
+                    </li>
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        Purchase history, order details, and receipts
+                    </li>
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        Account access - you will not be able to log in again
+                    </li>
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        Your username will be permanently unavailable
+                    </li>
+                    <li class="list-group-item list-group-item-danger">
+                        <i class="fas fa-times-circle text-danger me-2"></i>
+                        All linked services and subscriptions will be terminated
+                    </li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Important:</strong> This action cannot be undone. There is no grace period or recovery option.
+                </div>
+                
+                <div class="mb-4">
+                    <h6>Before proceeding, we recommend:</h6>
+                    <ol>
+                        <li>Download any designs or projects you want to keep</li>
+                        <li>Save your purchase history for tax or warranty purposes</li>
+                        <li>Consider deactivating instead of deleting if you might return</li>
+                    </ol>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="acknowledgeLoss">
+                    <label class="form-check-label" for="acknowledgeLoss">
+                        I acknowledge that all my data will be permanently deleted and cannot be recovered
+                    </label>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="downloadedData">
+                    <label class="form-check-label" for="downloadedData">
+                        I have downloaded or saved any data I wish to keep
+                    </label>
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="understandFinal">
+                    <label class="form-check-label" for="understandFinal">
+                        I understand this action is final and my account cannot be restored
+                    </label>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="confirmDelete" class="form-label">
+                        To confirm, type <strong class="text-danger">DELETE MY ACCOUNT</strong> below:
+                    </label>
+                    <input type="text" class="form-control" id="confirmDelete" placeholder="Type DELETE MY ACCOUNT here">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('delete_account') }}" id="deleteForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  <!-- CSRF Token -->
+                    <button type="submit" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        <i class="fas fa-trash-alt me-2"></i> Permanently Delete My Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize arrow rotation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle arrow rotation on collapse
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const arrow = this.querySelector('.arrow-icon');
+                if (arrow) {
+                    setTimeout(() => {
+                        const isCollapsed = this.getAttribute('aria-expanded') === 'true';
+                        arrow.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+                    }, 10);
+                }
+            });
+        });
+        
+        // Enhanced delete account confirmation
+        const checkboxes = document.querySelectorAll('#deleteAccountModal .form-check-input');
+        const confirmInput = document.getElementById('confirmDelete');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+        
+        function updateDeleteButton() {
+            if (!confirmInput || !confirmBtn) return;
+            
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            const textMatches = confirmInput.value === 'DELETE MY ACCOUNT';
+            
+            confirmBtn.disabled = !(allChecked && textMatches);
+            
+            if (allChecked && textMatches) {
+                confirmBtn.classList.remove('btn-secondary');
+                confirmBtn.classList.add('btn-danger');
+            } else {
+                confirmBtn.classList.remove('btn-danger');
+                confirmBtn.classList.add('btn-secondary');
+            }
+        }
+        
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateDeleteButton);
+        });
+        
+        if (confirmInput) {
+            confirmInput.addEventListener('input', updateDeleteButton);
+        }
+        
+        // Delete form submission
+        document.getElementById('deleteForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!confirm('FINAL WARNING: Are you absolutely sure you want to permanently delete your account? This cannot be undone!')) {
+                return false;
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Deleting Account...';
+                submitBtn.disabled = true;
+            }
+            
+            // Submit the form
+            this.submit();
+            return true;
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,655 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block title %}Contact Us - DesignCraft Studio{% endblock %}
+
+{% block head %}
+<style>
+    .contact-container {
+        padding: 2rem 0;
+    }
+    
+    .contact-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+    
+    .quick-action-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        background: var(--neutral-cream);
+        border: 1px solid var(--wood-light);
+        border-radius: 10px;
+        color: var(--neutral-dark);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-btn:hover {
+        background: var(--wood-light);
+        transform: translateY(-2px);
+    }
+    
+    .channel-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .channel-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        border: 1px solid var(--wood-light);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .channel-card:hover {
+        box-shadow: 0 10px 30px rgba(154, 175, 136, 0.15);
+        border-color: var(--sage-green);
+        transform: translateY(-5px);
+    }
+    
+    .channel-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-sage);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .availability {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--sage-light);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .contact-form-container {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid var(--wood-light);
+        box-shadow: 0 10px 40px rgba(166, 138, 100, 0.1);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--wood-light);
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    
+    .section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        color: var(--wood-dark);
+    }
+    
+    .section-title i {
+        margin-right: 10px;
+        color: var(--sage-green);
+    }
+    
+    .file-upload {
+        border: 2px dashed var(--wood-light);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .file-upload:hover {
+        border-color: var(--sage-green);
+        background: var(--neutral-cream);
+    }
+    
+    .file-list {
+        margin-top: 1rem;
+    }
+    
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem;
+        background: var(--neutral-cream);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .file-size {
+        color: var(--neutral-dark);
+        opacity: 0.7;
+        font-size: 0.9rem;
+    }
+    
+    .remove-file {
+        color: #dc3545;
+        cursor: pointer;
+    }
+    
+    .kb-suggestions {
+        background: var(--neutral-cream);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        border-left: 4px solid var(--sage-green);
+    }
+    
+    .suggestion-item {
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--wood-light);
+    }
+    
+    .suggestion-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .suggestion-link {
+        color: var(--sage-green);
+        text-decoration: none;
+        display: block;
+    }
+    
+    .suggestion-link:hover {
+        text-decoration: underline;
+    }
+    
+    .priority-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+    }
+    
+    .priority-low {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .priority-normal {
+        background: #cce5ff;
+        color: #004085;
+    }
+    
+    .priority-high {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .order-context {
+        background: var(--gradient-natural);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .order-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .order-image {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--wood-light);
+    }
+    
+    @media (max-width: 768px) {
+        .channel-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .quick-actions {
+            flex-direction: column;
+        }
+        
+        .quick-action-btn {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <div class="contact-header">
+        <h2><i class="fas fa-headset me-2"></i>Contact Our Support Team</h2>
+        <p class="text-muted">We're here to help! Choose the best way to get in touch with us</p>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="text-center">
+        <h5>Quick Actions</h5>
+        <div class="quick-actions">
+            <a href="{{ url_for('faq') }}#orders" class="quick-action-btn">
+                <i class="fas fa-box me-2"></i>Track My Order
+            </a>
+            <a href="{{ url_for('faq') }}#returns" class="quick-action-btn">
+                <i class="fas fa-undo me-2"></i>Start a Return
+            </a>
+            <a href="{{ url_for('faq') }}" class="quick-action-btn">
+                <i class="fas fa-question-circle me-2"></i>Browse FAQs
+            </a>
+            
+        </div>
+    </div>
+    
+    <!-- Contact Channels -->
+    <div class="channel-cards">
+        <div class="channel-card" onclick="document.getElementById('contact-form').scrollIntoView({behavior: 'smooth'})">
+            <div class="channel-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <h5>Email Support</h5>
+            <p>Detailed issues with attachments</p>
+            <span class="availability">Response within 24 hours</span>
+        </div>
+        
+        <div class="channel-card" id="startLiveChat">
+            <div class="channel-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h5>Live Chat</h5>
+            <p>Quick answers in real-time</p>
+            <span class="availability" id="chatStatus">Currently Online</span>
+        </div>
+        
+        <div class="channel-card" data-bs-toggle="modal" data-bs-target="#callbackModal">
+            <div class="channel-icon">
+                <i class="fas fa-phone"></i>
+            </div>
+            <h5>Request Callback</h5>
+            <p>We'll call you back</p>
+            <span class="availability">Mon-Fri, 9AM-6PM</span>
+        </div>
+        
+        <div class="channel-card">
+            <div class="channel-icon">
+                <i class="fab fa-twitter"></i>
+            </div>
+            <h5>Social Media</h5>
+            <p>DM us on social platforms</p>
+            <span class="availability">@DesignCraftSupport</span>
+        </div>
+    </div>
+    
+    <!-- Contact Form -->
+    <div class="contact-form-container" id="contact-form">
+        <form method="POST" action="{{ url_for('contact_us') }}" enctype="multipart/form-data" id="contactForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Order Context (if order ID provided) -->
+            {% if form.order_id.data %}
+            <div class="order-context">
+                <h6><i class="fas fa-receipt me-2"></i>Order Context</h6>
+                <p>We'll use your order details to better assist you.</p>
+                <div class="order-details">
+                    <div class="order-image">
+                        <i class="fas fa-tshirt fa-2x" style="color: var(--sage-green);"></i>
+                    </div>
+                    <div>
+                        <strong>Order #{{ form.order_id.data }}</strong>
+                        <p class="mb-0">Custom T-Shirt • Medium • $29.99</p>
+                        <small class="text-muted">Ordered: Jan 15, 2024</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Contact Information -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Contact Information
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ render_field(form.name, class="form-control", placeholder="Your full name") }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ render_field(form.email, class="form-control", placeholder="Your email address") }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ render_field(form.order_id, class="form-control", placeholder="Order ID (optional)") }}
+                        <small class="text-muted">Found in your order confirmation email</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Issue Details -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Issue Details
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ render_field(form.issue_type, class="form-select") }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Priority</label>
+                        {{ render_field(form.priority, class="form-select") }}
+                        <div class="mt-1">
+                            <small class="text-muted">
+                                <span class="priority-badge priority-low">Low</span> General inquiry
+                                <span class="priority-badge priority-normal ms-2">Normal</span> Need assistance
+                                <span class="priority-badge priority-high ms-2">High</span> Urgent issue
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ render_field(form.message, class="form-control", rows="5", placeholder="Please describe your issue in detail...") }}
+                    
+                    <!-- KB Suggestions -->
+                    <div class="kb-suggestions d-none" id="kbSuggestions">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Suggested Articles</h6>
+                        {% for article in suggested_articles %}
+                        <div class="suggestion-item">
+                            <a href="{{ url_for('faq') }}#{{ article.category }}" class="suggestion-link">
+                                <i class="fas fa-book me-2"></i>{{ article.title }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attachments -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-paperclip"></i>
+                    Attachments
+                </h5>
+                
+                <p class="text-muted mb-3">Add files to help us understand your issue better</p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="file-upload" onclick="document.getElementById('fileUpload').click()">
+                            <i class="fas fa-cloud-upload-alt fa-2x mb-3" style="color: var(--sage-green);"></i>
+                            <h6>Upload Photos or Files</h6>
+                            <p class="text-muted mb-2">Drag & drop or click to browse</p>
+                            <small class="text-muted">
+                                Images (JPG/PNG): up to 10MB each<br>
+                                PDF/Documents: up to 50MB each<br>
+                                Max 5 files total
+                            </small>
+                        </div>
+                        {{ form.attachments(class="d-none", id="fileUpload", multiple="multiple") }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="file-list" id="fileList">
+                            <!-- Files will be listed here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="form-check">
+                            {{ render_field(form.consent, class="form-check-input") }}
+                            <label class="form-check-label" for="consent">
+                                I consent to the storage of my information and attachments for support purposes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Submit -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Support Request
+                </button>
+                <p class="text-muted mt-2">
+                    <i class="fas fa-clock me-1"></i>
+                    We aim to respond within 24 hours
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Ticket Created Successfully</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-ticket-alt fa-4x mb-3" style="color: var(--sage-green);"></i>
+                <h4 id="ticketId">DC-20240115-ABC123</h4>
+                <p class="mb-3">Your support ticket has been created successfully.</p>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Next Steps:</strong><br>
+                    1. Check your email for confirmation<br>
+                    2. Save your ticket ID for reference<br>
+                    3. We'll respond within 24 hours
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <a href="{{ url_for('home') }}" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Callback Modal -->
+<div class="modal fade" id="callbackModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-phone me-2"></i>Request Callback</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="Enter your phone number">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Preferred Time</label>
+                    <select class="form-select">
+                        <option>Morning (9AM - 12PM)</option>
+                        <option>Afternoon (12PM - 3PM)</option>
+                        <option>Late Afternoon (3PM - 6PM)</option>
+                    </select>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox">
+                    <label class="form-check-label">
+                        I agree to be contacted at the provided number
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Request Callback</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const fileList = document.getElementById('fileList');
+        let files = [];
+        
+        fileUpload.addEventListener('change', function() {
+            for (let i = 0; i < this.files.length; i++) {
+                const file = this.files[i];
+                if (files.length >= 5) {
+                    alert('Maximum 5 files allowed');
+                    break;
+                }
+                
+                // Check file size
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File size must be less than 50MB');
+                    continue;
+                }
+                
+                files.push(file);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <i class="fas fa-file me-2"></i>
+                        <span>${file.name}</span>
+                        <span class="file-size">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    </div>
+                    <div class="remove-file" data-index="${files.length - 1}">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                fileList.appendChild(fileItem);
+            }
+            
+            // Clear input
+            this.value = '';
+        });
+        
+        // Remove file
+        fileList.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-file')) {
+                const index = e.target.closest('.remove-file').dataset.index;
+                files.splice(index, 1);
+                e.target.closest('.file-item').remove();
+                updateFileListIndices();
+            }
+        });
+        
+        function updateFileListIndices() {
+            document.querySelectorAll('.remove-file').forEach((btn, index) => {
+                btn.dataset.index = index;
+            });
+        }
+        
+        // KB suggestions based on message content
+        const messageField = document.getElementById('message');
+        const kbSuggestions = document.getElementById('kbSuggestions');
+        
+        messageField.addEventListener('input', function() {
+            const text = this.value.toLowerCase();
+            if (text.length > 10) {
+                kbSuggestions.classList.remove('d-none');
+            } else {
+                kbSuggestions.classList.add('d-none');
+            }
+        });
+        
+        // Live chat simulation
+        document.getElementById('startLiveChat').addEventListener('click', function() {
+            const chatStatus = document.getElementById('chatStatus');
+            if (chatStatus.textContent === 'Currently Online') {
+                // Simulate starting chat
+                alert('Live chat will open in a new window. For this demo, please use the contact form.');
+                chatStatus.textContent = 'Chat session started';
+                chatStatus.style.background = '#d4edda';
+            } else {
+                alert('Please wait for an agent to become available.');
+            }
+        });
+        
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Ticket...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Generate ticket ID
+                const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+                const randomId = Math.random().toString(36).substr(2, 8).toUpperCase();
+                const ticketId = `DC-${date}-${randomId}`;
+                
+                // Update modal with ticket ID
+                document.getElementById('ticketId').textContent = ticketId;
+                
+                // Show success modal
+                const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                modal.show();
+                
+                // Reset form
+                this.reset();
+                files = [];
+                fileList.innerHTML = '';
+                kbSuggestions.classList.add('d-none');
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+        
+        // Auto-fill order ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order_id');
+        if (orderId) {
+            document.getElementById('order_id').value = orderId;
+        }
+    });
+</script>
+{% endblock %}

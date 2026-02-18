@@ -1,0 +1,1753 @@
+<!-- Cheng khai , 252243P , group 4 - Customize Page -->
+{% extends "base.html" %}
+
+{% block title %}DesignCraft Studio - Customize{% endblock %}
+
+{% block head %}
+<style>
+    :root {
+        --wood-light: #E3D5C6;
+        --wood-medium: #D4B896;
+        --wood-dark: #A68A64;
+        --sage-green: #9CAF88;
+        --sage-light: #C8D5B9;
+        --sage-dark: #7A8F72;
+        --neutral-cream: #F5F1EB;
+        --neutral-dark: #3C3C3C;
+        --neutral-light: #FAF7F2;
+        --accent-brown: #8B7355;
+    }
+    
+    .customize-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .customize-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .customize-header h1 {
+        font-size: 2.5rem;
+        color: var(--wood-dark);
+        margin-bottom: 1rem;
+    }
+    
+    .customize-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .customize-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    
+    /* Preview Section */
+    .preview-section {
+        background: var(--neutral-light);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+    
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .preview-header h2 {
+        color: var(--wood-dark);
+        font-size: 1.5rem;
+    }
+    
+    .product-badge {
+        background: var(--sage-green);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+    }
+    
+    .preview-canvas {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .product-display {
+        text-align: center;
+        transition: transform 0.3s ease;
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .product-display:hover {
+        transform: scale(1.02);
+    }
+    
+    .design-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .design-overlay img,
+    .design-overlay div {
+        user-select: none;
+    }
+    
+    .product-display img {
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+    }
+    
+    .product-display h3 {
+        margin-top: 1rem;
+        color: var(--wood-dark);
+    }
+    
+    .product-display p {
+        color: #666;
+    }
+    
+    .preview-controls {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: center;
+    }
+    
+    .preview-btn {
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--wood-light);
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .preview-btn:hover {
+        border-color: var(--sage-green);
+        background: var(--sage-light);
+    }
+    
+    /* Customize Section */
+    .customize-section {
+        padding: 1rem;
+    }
+    
+    .customize-section h2 {
+        color: var(--wood-dark);
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .design-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--wood-light);
+        padding-bottom: 0.5rem;
+    }
+    
+    .design-tab {
+        padding: 0.75rem 1.5rem;
+        background: none;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        cursor: pointer;
+        font-weight: 500;
+        color: #666;
+        transition: all 0.3s;
+    }
+    
+    .design-tab:hover {
+        color: var(--wood-dark);
+        background: var(--wood-light);
+    }
+    
+    .design-tab.active {
+        color: var(--sage-dark);
+        border-bottom: 3px solid var(--sage-green);
+    }
+    
+    .design-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .design-panel.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Upload Area */
+    .upload-area {
+        border: 2px dashed var(--sage-green);
+        border-radius: 10px;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: var(--neutral-light);
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 1.5rem;
+    }
+    
+    .upload-area:hover {
+        background: var(--sage-light);
+        border-color: var(--sage-dark);
+    }
+    
+    .upload-area i {
+        font-size: 3rem;
+        color: var(--sage-green);
+        margin-bottom: 1rem;
+    }
+    
+    .upload-area p {
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .upload-area small {
+        color: #999;
+    }
+    
+    /* Image Gallery */
+    .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+    
+    .gallery-item {
+        border: 2px solid var(--wood-light);
+        border-radius: 8px;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+    
+    .gallery-item:hover {
+        border-color: var(--sage-green);
+        transform: translateY(-2px);
+    }
+    
+    .gallery-item.selected {
+        border-color: var(--sage-green);
+        background: var(--sage-light);
+    }
+    
+    .gallery-item img {
+        width: 100%;
+        height: 80px;
+        object-fit: contain;
+        margin-bottom: 0.5rem;
+    }
+    
+    .gallery-item span {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    /* Control Sliders */
+    .control-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .control-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--wood-dark);
+    }
+    
+    .control-group input[type="range"] {
+        width: 100%;
+        height: 6px;
+        -webkit-appearance: none;
+        background: var(--wood-light);
+        border-radius: 3px;
+        outline: none;
+    }
+    
+    .control-group input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--sage-green);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .control-group input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        background: var(--sage-dark);
+    }
+    
+    .control-value {
+        float: right;
+        color: var(--sage-dark);
+        font-weight: 600;
+    }
+    
+    /* Color Options */
+    .color-options {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+    
+    .color-option {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .color-option:hover {
+        transform: scale(1.1);
+    }
+    
+    .color-option.selected {
+        border-color: var(--wood-dark);
+        transform: scale(1.1);
+    }
+    
+    /* Position Controls */
+    .position-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .action-btn {
+        padding: 1rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .action-btn.primary {
+        background: var(--sage-green);
+        color: white;
+    }
+    
+    .action-btn.primary:hover {
+        background: var(--sage-dark);
+        transform: translateY(-2px);
+    }
+    
+    .action-btn.secondary {
+        background: var(--wood-dark);
+        color: white;
+    }
+    
+    .action-btn.secondary:hover {
+        background: var(--accent-brown);
+        transform: translateY(-2px);
+    }
+    
+    .action-btn.outline {
+        background: white;
+        border: 2px solid var(--wood-dark);
+        color: var(--wood-dark);
+    }
+    
+    .action-btn.outline:hover {
+        background: var(--wood-light);
+    }
+    
+    /* Text Controls */
+    .text-controls {
+        display: none;
+    }
+    
+    .text-controls.active {
+        display: block;
+    }
+    
+    .text-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid var(--wood-light);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+    
+    .text-input:focus {
+        border-color: var(--sage-green);
+        outline: none;
+    }
+    
+    /* Font Options */
+    .font-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .font-option {
+        padding: 0.75rem;
+        border: 2px solid var(--wood-light);
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .font-option:hover {
+        border-color: var(--sage-green);
+    }
+    
+    .font-option.selected {
+        background: var(--sage-green);
+        color: white;
+        border-color: var(--sage-green);
+    }
+    
+    /* Selected Designs */
+    .selected-designs {
+        margin-top: 2rem;
+        border-top: 2px solid var(--wood-light);
+        padding-top: 1.5rem;
+    }
+    
+    .selected-designs h3 {
+        color: var(--wood-dark);
+        margin-bottom: 1rem;
+    }
+    
+    .designs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .design-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: var(--neutral-light);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .design-item:hover {
+        background: var(--wood-light);
+    }
+    
+    .design-item.selected {
+        border: 2px solid var(--sage-green);
+        background: var(--sage-light);
+    }
+    
+    .design-item img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    .design-item .design-info {
+        flex: 1;
+    }
+    
+    .design-item .design-info h4 {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .design-item .design-info p {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .design-item .remove-btn {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .design-item .remove-btn:hover {
+        color: #ff4444;
+    }
+    
+    /* Notification */
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--sage-green);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: none;
+        animation: slideIn 0.3s ease;
+    }
+    
+    .notification.show {
+        display: block;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    /* Loading Spinner */
+    .loading-spinner {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.8);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .loading-spinner.show {
+        display: flex;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--wood-light);
+        border-top-color: var(--sage-green);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .customize-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .customize-container {
+            padding: 1rem;
+        }
+        
+        .customize-header h1 {
+            font-size: 2rem;
+        }
+        
+        .image-gallery {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="customize-container">
+    <div class="customize-header">
+        <h1>Customize Your Product</h1>
+        <p>Upload images, add text, and create your unique design</p>
+    </div>
+    
+    <div class="customize-grid">
+        <!-- Left Side - Preview -->
+        <div class="preview-section">
+            <div class="preview-header">
+                <h2>Live Preview</h2>
+                <span class="product-badge" id="productBadge">{{ product.name }}</span>
+            </div>
+            
+            <div class="preview-canvas" id="previewCanvas">
+                <div class="product-display" id="productDisplay">
+                    {% if product.image_url and product.image_url|trim %}
+                        {% if product.image_url.startswith('http://') or product.image_url.startswith('https://') %}
+                        <img src="{{ product.image_url }}" 
+                             alt="{{ product.name }}" 
+                             id="productImage"
+                             data-product-type="{{ productData.category }}"
+                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/placeholder-tshirt.png') if url_for('static', filename='images/placeholder-tshirt.png') else '#' }}';">
+                        {% else %}
+                        <img src="{{ url_for('static', filename=product.image_url) }}" 
+                             alt="{{ product.name }}" 
+                             id="productImage"
+                             data-product-type="{{ productData.category }}"
+                             onerror="this.onerror=null; this.style.display='none';">
+                        {% endif %}
+                    {% else %}
+                        <div style="text-align: center;">
+                            <i class="fas {% if 'mug' in productData.category.lower() %}fa-mug-hot{% else %}fa-tshirt{% endif %}" 
+                               style="font-size: 150px; color: #ddd;"></i>
+                            <h3>{{ product.name }}</h3>
+                        </div>
+                    {% endif %}
+                    <p>Size: <strong id="selectedSize">{{ size }}</strong> | 
+                       Color: <strong id="selectedColor">White</strong></p>
+                </div>
+            </div>
+            
+            <div class="preview-controls">
+                <button class="preview-btn" onclick="rotatePreview('left')">
+                    <i class="fas fa-undo-alt"></i> Rotate Left
+                </button>
+                <button class="preview-btn" onclick="rotatePreview('right')">
+                    <i class="fas fa-redo-alt"></i> Rotate Right
+                </button>
+                <button class="preview-btn" onclick="resetPreview()">
+                    <i class="fas fa-sync-alt"></i> Reset
+                </button>
+            </div>
+        </div>
+        
+        <!-- Right Side - Customization Tools -->
+        <div class="customize-section">
+            <h2>Design Tools</h2>
+            
+            <!-- Design Tabs -->
+            <div class="design-tabs">
+                <button class="design-tab active" onclick="switchTab('images', this)">
+                    <i class="fas fa-images"></i> Images
+                </button>
+                <button class="design-tab" onclick="switchTab('text', this)">
+                    <i class="fas fa-font"></i> Text
+                </button>
+                <button class="design-tab" onclick="switchTab('colors', this)">
+                    <i class="fas fa-palette"></i> Colors
+                </button>
+            </div>
+            
+            <!-- Images Panel -->
+            <div class="design-panel active" id="panel-images">
+                <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Click to upload images</p>
+                    <small>PNG, JPG, SVG up to 10MB</small>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="image-gallery" id="imageGallery">
+                    <!-- Sample images will be added via JavaScript -->
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        Scale 
+                        <span class="control-value" id="scaleValue">1.0</span>
+                    </label>
+                    <input type="range" id="scaleSlider" min="0.1" max="3" step="0.1" value="1.0">
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        Rotation 
+                        <span class="control-value" id="rotationValue">0°</span>
+                    </label>
+                    <input type="range" id="rotationSlider" min="0" max="360" step="1" value="0">
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        Opacity 
+                        <span class="control-value" id="opacityValue">100%</span>
+                    </label>
+                    <input type="range" id="opacitySlider" min="0" max="1" step="0.1" value="1">
+                </div>
+                
+                <div class="position-controls">
+                    <div>
+                        <label>X Position</label>
+                        <input type="range" id="xSlider" min="-200" max="200" step="1" value="0">
+                    </div>
+                    <div>
+                        <label>Y Position</label>
+                        <input type="range" id="ySlider" min="-200" max="200" step="1" value="0">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem; margin: 1rem 0;">
+                    <button class="action-btn outline" onclick="flipImage()">
+                        <i class="fas fa-arrows-alt-h"></i> Flip
+                    </button>
+                    <button class="action-btn outline" onclick="duplicateImage()">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                    <button class="action-btn outline" onclick="removeImage()">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Text Panel -->
+            <div class="design-panel" id="panel-text">
+                <div class="text-controls active">
+                    <input type="text" class="text-input" id="textInput" 
+                           placeholder="Enter your text here...">
+                    
+                    <div class="font-options">
+                        <div class="font-option selected" onclick="selectFont('Arial', this)" style="font-family: Arial;">Arial</div>
+                        <div class="font-option" onclick="selectFont('Times New Roman', this)" style="font-family: 'Times New Roman';">Times</div>
+                        <div class="font-option" onclick="selectFont('Courier New', this)" style="font-family: 'Courier New';">Courier</div>
+                        <div class="font-option" onclick="selectFont('Georgia', this)" style="font-family: Georgia;">Georgia</div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>
+                            Font Size 
+                            <span class="control-value" id="fontSizeValue">24</span>
+                        </label>
+                        <input type="range" id="fontSizeSlider" min="8" max="72" step="1" value="24">
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem; margin: 1rem 0;">
+                        <button class="action-btn outline" onclick="addText()">
+                            <i class="fas fa-plus"></i> Add Text
+                        </button>
+                        <button class="action-btn outline" onclick="toggleBold()">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button class="action-btn outline" onclick="toggleItalic()">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Colors Panel -->
+            <div class="design-panel" id="panel-colors">
+                <h4 style="color: var(--wood-dark); margin-bottom: 1rem;">Product Color</h4>
+                <div class="color-options" id="productColors">
+                    <!-- Colors will be added via JavaScript -->
+                </div>
+                
+                <h4 style="color: var(--wood-dark); margin: 2rem 0 1rem;">Text Color</h4>
+                <div class="color-options" id="textColors">
+                    <div class="color-option" style="background-color: #000000;" data-color="#000000"></div>
+                    <div class="color-option" style="background-color: #ffffff; border: 1px solid #ddd;" data-color="#ffffff"></div>
+                    <div class="color-option" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                    <div class="color-option" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                    <div class="color-option" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                    <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                    <div class="color-option" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                    <div class="color-option" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                    <div class="color-option" style="background-color: #ff8800;" data-color="#ff8800"></div>
+                    <div class="color-option" style="background-color: #8800ff;" data-color="#8800ff"></div>
+                </div>
+            </div>
+            
+            <!-- Selected Designs List -->
+            <div class="selected-designs">
+                <h3>Your Design Elements</h3>
+                <div class="designs-list" id="designsList">
+                    <div style="text-align: center; color: #999; padding: 2rem;">
+                        No designs added yet. Upload an image or add text to get started.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="saveDesign()">
+                    <i class="fas fa-save"></i> Save Design
+                </button>
+                <button class="action-btn secondary" onclick="addToCart()">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<!-- Loading Spinner -->
+<div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner"></div>
+</div>
+
+<!-- Hidden form for adding customized product to cart -->
+<form id="customizeForm" method="POST" style="display: none;" action="{{ url_for('add_to_cart', product_id=product.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="product_id" value="{{ productData.id }}">
+    <input type="hidden" name="size" value="{{ size }}">
+    <input type="hidden" name="color" id="formColor" value="White">
+    <input type="hidden" name="quantity" value="1">
+    <input type="hidden" name="design_data" id="formDesignData">
+</form>
+
+<script>
+    // Product data from server
+    const productData = {
+        id: {{ product.id if product else 0 }},
+        name: "{{ product.name if product else '' }}",
+        category: "{{ product.category if product else '' }}",
+        colors: {{ product.colors|tojson|safe if product else '[]' }},
+        sizes: {{ product.sizes|tojson|safe if product else '[]' }},
+        price: {{ product.price if product else 0 }}
+    };
+
+    console.log('Product data loaded:', productData);
+    console.log('Product ID:', productData.id);
+    console.log('Product name:', productData.name);
+    console.log('Product colors:', productData.colors);
+    console.log('Product sizes:', productData.sizes);
+    
+    const selectedSize = "{{ size }}";
+    
+    // Design elements array
+    let designElements = [];
+    let selectedElement = null;
+    let nextId = 1;
+    
+    // Current text properties (for new text)
+    let currentFont = 'Arial';
+    let currentFontSize = 24;
+    let currentTextColor = '#000000';
+    
+    // Sample images for gallery - Using SVG shapes with proper colors
+    const sampleImages = [
+        { 
+            name: 'Star', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 61,38 95,38 68,58 79,95 50,75 21,95 32,58 5,38 39,38" fill="#9CAF88" stroke="#7A8F72" stroke-width="2"/></svg>')
+        },
+        { 
+            name: 'Heart', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M50,85 C35,70 15,53 15,35 C15,23 25,13 37,13 C44,13 50,17 50,23 C50,17 56,13 63,13 C75,13 85,23 85,35 C85,53 65,70 50,85 Z" fill="#A68A64" stroke="#8B7355" stroke-width="2"/></svg>')
+        },
+        { 
+            name: 'Circle', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="#D4B896" stroke="#A68A64" stroke-width="2"/></svg>')
+        },
+        { 
+            name: 'Square', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="80" height="80" fill="#C8D5B9" stroke="#9CAF88" stroke-width="2" rx="5"/></svg>')
+        },
+        { 
+            name: 'Triangle', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,90 10,90" fill="#8B7355" stroke="#A68A64" stroke-width="2"/></svg>')
+        },
+        { 
+            name: 'Diamond', 
+            url: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,10 90,50 50,90 10,50" fill="#7A8F72" stroke="#9CAF88" stroke-width="2"/></svg>')
+        }
+    ];
+    
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+        initColorOptions();
+        initImageGallery();
+        initSliders();
+        initTextColorSelection();
+        updateDesignsList();
+        
+        // Wait for product image to load before initializing preview
+        const productImg = document.getElementById('productImage');
+        if (productImg) {
+            if (productImg.complete) {
+                updatePreview();
+            } else {
+                productImg.addEventListener('load', updatePreview);
+            }
+        }
+    });
+    
+    // Initialize text color selection
+    function initTextColorSelection() {
+        const colorOptions = document.querySelectorAll('#textColors .color-option');
+        if (colorOptions.length > 0) {
+            // Select first color by default
+            colorOptions[0].classList.add('selected');
+            currentTextColor = colorOptions[0].getAttribute('data-color');
+        }
+        
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                currentTextColor = this.getAttribute('data-color');
+                
+                // Update selected text element if one is selected
+                if (selectedElement && selectedElement.type === 'text') {
+                    selectedElement.color = currentTextColor;
+                    updatePreview();
+                }
+            });
+        });
+    }
+    
+    // Initialize color options
+    function initColorOptions() {
+        const colors = productData.colors || ['White', 'Black', 'Gray', 'Navy', 'Red'];
+        const container = document.getElementById('productColors');
+        container.innerHTML = '';
+        
+        colors.forEach(color => {
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'color-option';
+            
+            // Set background color based on color name
+            const bgColor = getColorValue(color);
+            colorDiv.style.backgroundColor = bgColor;
+            
+            if (color === 'White') {
+                colorDiv.style.border = '1px solid #ddd';
+                colorDiv.classList.add('selected');
+            }
+            
+            colorDiv.dataset.color = color;
+            colorDiv.onclick = () => selectProductColor(color, colorDiv);
+            container.appendChild(colorDiv);
+        });
+    }
+    
+    // Get hex value from color name
+    function getColorValue(color) {
+        const colorMap = {
+            'White': '#ffffff',
+            'Black': '#000000',
+            'Gray': '#808080',
+            'Navy': '#000080',
+            'Red': '#ff0000',
+            'Blue': '#0000ff',
+            'Green': '#008000',
+            'Yellow': '#ffff00',
+            'Purple': '#800080',
+            'Orange': '#ffa500',
+            'Pink': '#ffc0cb',
+            'Brown': '#8b4513'
+        };
+        return colorMap[color] || '#cccccc';
+    }
+    
+    // Select product color
+    function selectProductColor(color, element) {
+        document.querySelectorAll('#productColors .color-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        document.getElementById('selectedColor').textContent = color;
+        document.getElementById('formColor').value = color;
+        showNotification(`Product color changed to ${color}`);
+    }
+    
+    // Initialize image gallery
+    function initImageGallery() {
+        const gallery = document.getElementById('imageGallery');
+        gallery.innerHTML = '';
+        
+        sampleImages.forEach((img, index) => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.innerHTML = `
+                <img src="${img.url}" alt="${img.name}">
+                <span>${img.name}</span>
+            `;
+            item.onclick = () => addImageToDesign(img.url, img.name);
+            gallery.appendChild(item);
+        });
+    }
+    
+    // Add image to design
+    function addImageToDesign(url, name) {
+        const element = {
+            id: nextId++,
+            type: 'image',
+            name: name,
+            url: url,
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
+            x: 0,
+            y: 0,
+            flip: false
+        };
+        
+        designElements.push(element);
+        selectedElement = element;
+        updateDesignsList();
+        updateSlidersFromElement();
+        
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            updatePreview();
+        }, 100);
+        
+        showNotification(`Added "${name}" to your design`);
+    }
+    
+    // Add text to design
+    function addText() {
+        const text = document.getElementById('textInput').value.trim();
+        if (!text) {
+            showNotification('Please enter some text', 'error');
+            return;
+        }
+        
+        // Get current font - use stored currentFont variable
+        const font = currentFont;
+        
+        // Get current font size from slider
+        const fontSize = parseInt(document.getElementById('fontSizeSlider').value) || currentFontSize;
+        
+        // Get current text color from selected color option
+        const selectedColorOption = document.querySelector('#textColors .color-option.selected');
+        const color = selectedColorOption ? selectedColorOption.getAttribute('data-color') : currentTextColor;
+        
+        const element = {
+            id: nextId++,
+            type: 'text',
+            text: text,
+            font: font,
+            fontSize: fontSize,
+            color: color,
+            bold: false,
+            italic: false,
+            x: 0,
+            y: 0,
+            rotation: 0,
+            opacity: 1
+        };
+        
+        designElements.push(element);
+        selectedElement = element;
+        updateDesignsList();
+        updateSlidersFromElement();
+        
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            updatePreview();
+        }, 100);
+        
+        showNotification(`Added text "${text}" to your design`);
+        document.getElementById('textInput').value = '';
+    }
+    
+    // Update designs list
+    function updateDesignsList() {
+        const container = document.getElementById('designsList');
+        
+        if (designElements.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: #999; padding: 2rem;">No designs added yet. Upload an image or add text to get started.</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        designElements.forEach(element => {
+            const item = document.createElement('div');
+            item.className = `design-item ${selectedElement && selectedElement.id === element.id ? 'selected' : ''}`;
+            
+            if (element.type === 'image') {
+                item.innerHTML = `
+                    <img src="${element.url}" alt="${element.name}">
+                    <div class="design-info">
+                        <h4>${element.name}</h4>
+                        <p>Scale: ${element.scale.toFixed(1)}x | Rotation: ${element.rotation}°</p>
+                    </div>
+                    <button class="remove-btn" onclick="removeElement(${element.id}, event)"><i class="fas fa-times"></i></button>
+                `;
+            } else {
+                item.innerHTML = `
+                    <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-family: ${element.font};">
+                        <span style="color: ${element.color};">Aa</span>
+                    </div>
+                    <div class="design-info">
+                        <h4>${element.text.substring(0, 20)}${element.text.length > 20 ? '...' : ''}</h4>
+                        <p>${element.font} | ${element.fontSize}px</p>
+                    </div>
+                    <button class="remove-btn" onclick="removeElement(${element.id}, event)"><i class="fas fa-times"></i></button>
+                `;
+            }
+            
+            item.onclick = () => selectElement(element.id);
+            container.appendChild(item);
+        });
+    }
+    
+    // Select element
+    function selectElement(id) {
+        selectedElement = designElements.find(el => el.id === id);
+        updateDesignsList();
+        updateSlidersFromElement();
+    }
+    
+    // Remove element
+    function removeElement(id, event) {
+        event.stopPropagation();
+        designElements = designElements.filter(el => el.id !== id);
+        if (selectedElement && selectedElement.id === id) {
+            selectedElement = designElements.length > 0 ? designElements[0] : null;
+        }
+        updateDesignsList();
+        updatePreview();
+        showNotification('Element removed');
+    }
+    
+    // Initialize sliders
+    function initSliders() {
+        // Scale slider
+        document.getElementById('scaleSlider').addEventListener('input', function(e) {
+            if (!selectedElement || selectedElement.type !== 'image') return;
+            selectedElement.scale = parseFloat(e.target.value);
+            document.getElementById('scaleValue').textContent = selectedElement.scale.toFixed(1);
+            updatePreview();
+        });
+        
+        // Rotation slider
+        document.getElementById('rotationSlider').addEventListener('input', function(e) {
+            if (!selectedElement) return;
+            selectedElement.rotation = parseInt(e.target.value);
+            document.getElementById('rotationValue').textContent = selectedElement.rotation + '°';
+            updatePreview();
+        });
+        
+        // Opacity slider
+        document.getElementById('opacitySlider').addEventListener('input', function(e) {
+            if (!selectedElement) return;
+            selectedElement.opacity = parseFloat(e.target.value);
+            document.getElementById('opacityValue').textContent = Math.round(selectedElement.opacity * 100) + '%';
+            updatePreview();
+        });
+        
+        // Position sliders
+        document.getElementById('xSlider').addEventListener('input', function(e) {
+            if (!selectedElement) return;
+            selectedElement.x = parseInt(e.target.value);
+            updatePreview();
+        });
+        
+        document.getElementById('ySlider').addEventListener('input', function(e) {
+            if (!selectedElement) return;
+            selectedElement.y = parseInt(e.target.value);
+            updatePreview();
+        });
+        
+        // Font size slider
+        document.getElementById('fontSizeSlider').addEventListener('input', function(e) {
+            const fontSize = parseInt(e.target.value);
+            currentFontSize = fontSize;
+            document.getElementById('fontSizeValue').textContent = fontSize;
+            
+            // Update selected text element if one is selected
+            if (selectedElement && selectedElement.type === 'text') {
+                selectedElement.fontSize = fontSize;
+                updatePreview();
+            }
+        });
+    }
+    
+    // Update sliders from selected element
+    function updateSlidersFromElement() {
+        if (!selectedElement) return;
+        
+        if (selectedElement.type === 'image') {
+            document.getElementById('scaleSlider').value = selectedElement.scale;
+            document.getElementById('scaleValue').textContent = selectedElement.scale.toFixed(1);
+        }
+        
+        document.getElementById('rotationSlider').value = selectedElement.rotation;
+        document.getElementById('rotationValue').textContent = selectedElement.rotation + '°';
+        
+        document.getElementById('opacitySlider').value = selectedElement.opacity;
+        document.getElementById('opacityValue').textContent = Math.round(selectedElement.opacity * 100) + '%';
+        
+        document.getElementById('xSlider').value = selectedElement.x;
+        document.getElementById('ySlider').value = selectedElement.y;
+        
+        if (selectedElement.type === 'text') {
+            document.getElementById('fontSizeSlider').value = selectedElement.fontSize;
+            document.getElementById('fontSizeValue').textContent = selectedElement.fontSize;
+        }
+    }
+    
+    // Update preview
+    function updatePreview() {
+        const display = document.getElementById('productDisplay');
+        if (!display) {
+            console.log('Product display not found');
+            return;
+        }
+        
+        // Get the product image
+        const productImg = display.querySelector('#productImage');
+        if (!productImg) {
+            console.log('Product image not found, but continuing with preview');
+            // Continue anyway - we can still show elements relative to display
+        }
+        
+        // Remove existing overlay if present
+        const existingOverlay = display.querySelector('.design-overlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+        
+        // If no design elements, don't create overlay
+        if (designElements.length === 0) {
+            return;
+        }
+        
+        // Create overlay container positioned relative to product image
+        const overlay = document.createElement('div');
+        overlay.className = 'design-overlay';
+        
+        // Wait for image to load to get proper dimensions
+        const setupOverlay = () => {
+            // Calculate position relative to display container
+            let imgLeft = 0;
+            let imgTop = 0;
+            let imgWidth = 300;
+            let imgHeight = 400;
+            
+            if (productImg) {
+                imgLeft = productImg.offsetLeft || 0;
+                imgTop = productImg.offsetTop || 0;
+                imgWidth = productImg.offsetWidth || productImg.clientWidth || productImg.naturalWidth || 300;
+                imgHeight = productImg.offsetHeight || productImg.clientHeight || productImg.naturalHeight || 400;
+            }
+            
+            // Fallback to display container dimensions if image dimensions aren't available
+            if (!imgWidth || !imgHeight || imgWidth === 0 || imgHeight === 0) {
+                const displayRect = display.getBoundingClientRect();
+                imgWidth = displayRect.width || 300;
+                imgHeight = displayRect.height || 400;
+            }
+            
+            overlay.style.cssText = `
+                position: absolute;
+                top: ${imgTop}px;
+                left: ${imgLeft}px;
+                width: ${imgWidth}px;
+                height: ${imgHeight}px;
+                pointer-events: none;
+            `;
+            
+            // Render each design element
+            designElements.forEach(element => {
+                if (element.type === 'image') {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = element.url;
+                    imgElement.alt = element.name;
+                    imgElement.style.cssText = `
+                        position: absolute;
+                        left: ${50 + element.x}%;
+                        top: ${50 + element.y}%;
+                        transform: translate(-50%, -50%) 
+                                   scale(${element.scale}) 
+                                   rotate(${element.rotation}deg)
+                                   ${element.flip ? 'scaleX(-1)' : ''};
+                        opacity: ${element.opacity};
+                        max-width: ${Math.min(imgWidth * 0.4, 200)}px;
+                        max-height: ${Math.min(imgHeight * 0.4, 200)}px;
+                        width: auto;
+                        height: auto;
+                        pointer-events: ${selectedElement && selectedElement.id === element.id ? 'auto' : 'none'};
+                        cursor: ${selectedElement && selectedElement.id === element.id ? 'move' : 'default'};
+                        z-index: ${selectedElement && selectedElement.id === element.id ? 10 : 1};
+                        transition: transform 0.1s ease, opacity 0.1s ease;
+                        ${selectedElement && selectedElement.id === element.id ? 'outline: 2px dashed #9CAF88; outline-offset: 4px;' : ''}
+                    `;
+                    
+                    // Make selected element draggable
+                    if (selectedElement && selectedElement.id === element.id) {
+                        imgElement.style.pointerEvents = 'auto';
+                        let isDragging = false;
+                        
+                        imgElement.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            isDragging = true;
+                            const startX = e.clientX;
+                            const startY = e.clientY;
+                            const startElementX = element.x;
+                            const startElementY = element.y;
+                            
+                            const onMouseMove = (e) => {
+                                if (!isDragging) return;
+                                const deltaX = ((e.clientX - startX) / imgWidth) * 100;
+                                const deltaY = ((e.clientY - startY) / imgHeight) * 100;
+                                element.x = startElementX + deltaX;
+                                element.y = startElementY + deltaY;
+                                updatePreview();
+                            };
+                            
+                            const onMouseUp = () => {
+                                isDragging = false;
+                                document.removeEventListener('mousemove', onMouseMove);
+                                document.removeEventListener('mouseup', onMouseUp);
+                            };
+                            
+                            document.addEventListener('mousemove', onMouseMove);
+                            document.addEventListener('mouseup', onMouseUp);
+                        });
+                    }
+                    
+                    overlay.appendChild(imgElement);
+                } else if (element.type === 'text') {
+                    const textElement = document.createElement('div');
+                    textElement.textContent = element.text;
+                    textElement.style.cssText = `
+                        position: absolute;
+                        left: ${50 + element.x}%;
+                        top: ${50 + element.y}%;
+                        transform: translate(-50%, -50%) rotate(${element.rotation}deg);
+                        opacity: ${element.opacity};
+                        font-family: ${element.font};
+                        font-size: ${element.fontSize}px;
+                        color: ${element.color};
+                        font-weight: ${element.bold ? 'bold' : 'normal'};
+                        font-style: ${element.italic ? 'italic' : 'normal'};
+                        pointer-events: ${selectedElement && selectedElement.id === element.id ? 'auto' : 'none'};
+                        cursor: ${selectedElement && selectedElement.id === element.id ? 'move' : 'default'};
+                        z-index: ${selectedElement && selectedElement.id === element.id ? 10 : 1};
+                        white-space: nowrap;
+                        user-select: none;
+                        ${selectedElement && selectedElement.id === element.id ? 'outline: 2px dashed #9CAF88; outline-offset: 4px; padding: 2px;' : ''}
+                    `;
+                    
+                    // Make selected text draggable
+                    if (selectedElement && selectedElement.id === element.id) {
+                        let isDragging = false;
+                        textElement.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            isDragging = true;
+                            const startX = e.clientX;
+                            const startY = e.clientY;
+                            const startElementX = element.x;
+                            const startElementY = element.y;
+                            
+                            const onMouseMove = (e) => {
+                                if (!isDragging) return;
+                                const deltaX = ((e.clientX - startX) / imgWidth) * 100;
+                                const deltaY = ((e.clientY - startY) / imgHeight) * 100;
+                                element.x = startElementX + deltaX;
+                                element.y = startElementY + deltaY;
+                                updatePreview();
+                            };
+                            
+                            const onMouseUp = () => {
+                                isDragging = false;
+                                document.removeEventListener('mousemove', onMouseMove);
+                                document.removeEventListener('mouseup', onMouseUp);
+                            };
+                            
+                            document.addEventListener('mousemove', onMouseMove);
+                            document.addEventListener('mouseup', onMouseUp);
+                        });
+                    }
+                    
+                    overlay.appendChild(textElement);
+                }
+            });
+            
+            display.appendChild(overlay);
+        };
+        
+        // Setup overlay after image loads (or immediately if no image)
+        if (!productImg) {
+            // No product image - position overlay relative to display
+            const displayRect = display.getBoundingClientRect();
+            overlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: ${displayRect.width || 300}px;
+                height: ${displayRect.height || 400}px;
+                pointer-events: none;
+            `;
+            setupOverlay();
+        } else if (productImg.complete) {
+            setupOverlay();
+        } else {
+            productImg.addEventListener('load', setupOverlay, { once: true });
+            // Also try setup after a short delay in case load event doesn't fire
+            setTimeout(setupOverlay, 500);
+        }
+        
+        console.log('Preview updated with', designElements.length, 'elements');
+    }
+    
+    // Flip image
+    function flipImage() {
+        if (!selectedElement || selectedElement.type !== 'image') {
+            showNotification('Select an image to flip', 'error');
+            return;
+        }
+        selectedElement.flip = !selectedElement.flip;
+        updatePreview();
+        showNotification('Image flipped');
+    }
+    
+    // Duplicate image
+    function duplicateImage() {
+        if (!selectedElement) {
+            showNotification('Select an element to duplicate', 'error');
+            return;
+        }
+        
+        const duplicate = {...selectedElement, id: nextId++};
+        if (duplicate.type === 'image') {
+            duplicate.x += 20;
+            duplicate.y += 20;
+        }
+        
+        designElements.push(duplicate);
+        selectedElement = duplicate;
+        updateDesignsList();
+        updatePreview();
+        showNotification('Element duplicated');
+    }
+    
+    // Remove image
+    function removeImage() {
+        if (!selectedElement) {
+            showNotification('Select an element to remove', 'error');
+            return;
+        }
+        
+        designElements = designElements.filter(el => el.id !== selectedElement.id);
+        selectedElement = designElements.length > 0 ? designElements[0] : null;
+        updateDesignsList();
+        updatePreview();
+        showNotification('Element removed');
+    }
+    
+    // Select font
+    function selectFont(font, element) {
+        document.querySelectorAll('.font-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        currentFont = font;
+        
+        // Update selected text element if one is selected
+        if (selectedElement && selectedElement.type === 'text') {
+            selectedElement.font = font;
+            updatePreview();
+        }
+    }
+    
+    // Toggle bold
+    function toggleBold() {
+        if (!selectedElement || selectedElement.type !== 'text') return;
+        selectedElement.bold = !selectedElement.bold;
+        updatePreview();
+    }
+    
+    // Toggle italic
+    function toggleItalic() {
+        if (!selectedElement || selectedElement.type !== 'text') return;
+        selectedElement.italic = !selectedElement.italic;
+        updatePreview();
+    }
+    
+    // Switch between tabs
+    function switchTab(tab, element) {
+        document.querySelectorAll('.design-tab').forEach(t => {
+            t.classList.remove('active');
+        });
+        document.querySelectorAll('.design-panel').forEach(p => {
+            p.classList.remove('active');
+        });
+        
+        element.classList.add('active');
+        document.getElementById(`panel-${tab}`).classList.add('active');
+    }
+    
+    // Rotate preview
+    function rotatePreview(direction) {
+        const display = document.getElementById('productDisplay');
+        const currentRotation = display.dataset.rotation ? parseInt(display.dataset.rotation) : 0;
+        const newRotation = direction === 'left' ? currentRotation - 90 : currentRotation + 90;
+        display.style.transform = `rotate(${newRotation}deg)`;
+        display.dataset.rotation = newRotation;
+    }
+    
+    // Reset preview
+    function resetPreview() {
+        const display = document.getElementById('productDisplay');
+        display.style.transform = 'rotate(0deg)';
+        display.dataset.rotation = 0;
+    }
+    
+    // Save design
+    function saveDesign() {
+        showLoading(true);
+        
+        // Simulate saving
+        setTimeout(() => {
+            showLoading(false);
+            showNotification('Design saved successfully!');
+        }, 1000);
+    }
+    
+    // Add to cart - prevent duplicates
+    let isSubmittingCart = false;
+    let submissionTimestamp = 0;
+    let submissionId = null;
+    
+    // Prevent form from submitting multiple times
+    const form = document.getElementById('customizeForm');
+    let formSubmitted = false;
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Only prevent if we've already submitted
+            if (formSubmitted) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+            // Check if CSRF token exists
+            const csrfInput = form.querySelector('input[name="csrf_token"]');
+            if (!csrfInput || !csrfInput.value) {
+                e.preventDefault();
+                showNotification('CSRF token missing. Please refresh the page and try again.', 'error');
+                isSubmittingCart = false;
+                formSubmitted = false;
+                return false;
+            }
+            // Mark as submitted
+            formSubmitted = true;
+        }, true); // Use capture phase
+    }
+    
+    async function addToCart() {
+        // Prevent multiple submissions - check both flag and timestamp
+        const now = Date.now();
+        if (isSubmittingCart || formSubmitted) {
+            showNotification('Please wait, adding to cart...', 'info');
+            return false;
+        }
+        
+        if (now - submissionTimestamp < 3000) {
+            showNotification('Please wait before adding again...', 'info');
+            return false;
+        }
+        
+        if (designElements.length === 0) {
+            showNotification('Add at least one design element before adding to cart', 'error');
+            return false;
+        }
+        
+        // Generate unique submission ID
+        submissionId = 'submit_' + now + '_' + Math.random().toString(36).substr(2, 9);
+        
+        // Set flag and timestamp immediately
+        isSubmittingCart = true;
+        submissionTimestamp = now;
+        formSubmitted = false; // Reset form submitted flag
+        showLoading(true);
+        
+        // Disable the button to prevent multiple clicks
+        const addToCartBtn = document.querySelector('.action-btn.secondary');
+        const originalBtnHTML = addToCartBtn ? addToCartBtn.innerHTML : '';
+        const originalBtnDisabled = addToCartBtn ? addToCartBtn.disabled : false;
+        
+        if (addToCartBtn) {
+            addToCartBtn.disabled = true;
+            addToCartBtn.style.pointerEvents = 'none';
+            addToCartBtn.style.opacity = '0.6';
+            addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+        }
+        
+        // Also disable all form inputs
+        const formInputs = form ? form.querySelectorAll('input, button, select, textarea') : [];
+        formInputs.forEach(input => {
+            if (input !== addToCartBtn && input.name !== 'csrf_token') {
+                input.disabled = true;
+            }
+        });
+        
+        try {
+            // Get fresh CSRF token before submitting
+            const tokenResponse = await fetch('/api/csrf-token');
+            if (!tokenResponse.ok) {
+                throw new Error('Failed to get CSRF token');
+            }
+            const tokenData = await tokenResponse.json();
+            
+            // Update CSRF token in form - make sure it exists
+            let csrfInput = form.querySelector('input[name="csrf_token"]');
+            if (!csrfInput) {
+                // Create CSRF token input if it doesn't exist
+                csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                form.appendChild(csrfInput);
+            }
+            csrfInput.value = tokenData.csrf_token;
+            
+            // Prepare design data with submission ID
+            const designData = {
+                product_id: productData.id,
+                product_name: productData.name,
+                size: selectedSize,
+                color: document.getElementById('selectedColor').textContent,
+                elements: designElements,
+                price: productData.price,
+                submission_id: submissionId,
+                timestamp: now
+            };
+            
+            // Set form data
+            const designDataInput = document.getElementById('formDesignData');
+            if (designDataInput) {
+                designDataInput.value = JSON.stringify(designData);
+            }
+            
+            // Verify CSRF token is set before submitting
+            csrfInput = form.querySelector('input[name="csrf_token"]');
+            if (!csrfInput || !csrfInput.value) {
+                throw new Error('CSRF token not set');
+            }
+            
+            // Submit form
+            if (form) {
+                form.submit();
+            }
+            
+            // Don't reset flag here - let the redirect handle it
+            
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            showNotification('Error adding to cart. Please try again.', 'error');
+            isSubmittingCart = false;
+            formSubmitted = false;
+            submissionTimestamp = 0;
+            submissionId = null;
+            showLoading(false);
+            
+            // Re-enable button
+            if (addToCartBtn) {
+                addToCartBtn.disabled = originalBtnDisabled;
+                addToCartBtn.style.pointerEvents = 'auto';
+                addToCartBtn.style.opacity = '1';
+                addToCartBtn.innerHTML = originalBtnHTML;
+            }
+            
+            // Re-enable form inputs
+            formInputs.forEach(input => {
+                input.disabled = false;
+            });
+        }
+        
+        return false;
+    }
+    
+    // File upload handling
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        
+        files.forEach(file => {
+            if (file.size > 10 * 1024 * 1024) {
+                showNotification(`${file.name} is too large (max 10MB)`, 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                addImageToDesign(e.target.result, file.name);
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Reset input
+        this.value = '';
+    });
+    
+    // Show/hide loading spinner
+    function showLoading(show) {
+        document.getElementById('loadingSpinner').classList.toggle('show', show);
+    }
+    
+    // Show notification
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = 'notification show';
+        
+        if (type === 'error') {
+            notification.style.background = '#ff4444';
+        } else {
+            notification.style.background = 'var(--sage-green)';
+        }
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+</script>
+{% endblock %}

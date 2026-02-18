@@ -1,0 +1,424 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block title %}Register - DesignCraft Studio{% endblock %}
+
+{% block head %}
+
+<style>
+    .register-container {
+        padding: 2rem 0;
+    }
+    
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(166, 138, 100, 0.15);
+        overflow: hidden;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .register-header {
+        background: var(--gradient-wood);
+        color: var(--neutral-dark);
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .register-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-sage);
+    }
+    
+    .register-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--sage-green);
+    }
+    
+    .register-body {
+        padding: 2.5rem;
+    }
+    
+    .input-group-text {
+        background: var(--wood-light);
+        border: 2px solid var(--wood-light);
+        color: var(--wood-dark);
+    }
+    
+    .password-rules {
+        background: var(--neutral-cream);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .terms-link {
+        color: var(--sage-green);
+        text-decoration: none;
+    }
+    
+    .terms-link:hover {
+        color: var(--sage-dark);
+        text-decoration: underline;
+    }
+    
+    .date-field .form-control {
+        font-family: monospace;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="register-card fade-in">
+                <div class="register-header">
+                    <div class="register-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Create Your DesignCraft Studio Account</h3>
+                    <p class="mb-0">Join our community of creative makers</p>
+                </div>
+                
+                <div class="register-body">
+                    <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+                        {{ form.hidden_tag() }}  <!-- CSRF Token -->
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="username"><i class="fas fa-user me-1"></i> Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ render_field(form.username, class="form-control", id="username", placeholder="Choose a username", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="email"><i class="fas fa-envelope me-1"></i> Email Address</label>
+                                    <div class="input-group">
+                                        {{ render_field(form.email, class="form-control", id="email", placeholder="Enter your email", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-primary" id="sendOTP">
+                                            <i class="fas fa-paper-plane"></i> Send OTP
+                                        </button>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">We'll send a verification code to your email</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- OTP Section -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="email_otp"><i class="fas fa-shield-alt me-1"></i> Email Verification Code</label>
+                                    <div class="input-group">
+                                        {{ render_field(form.email_otp, class="form-control", id="email_otp", placeholder="Enter 6-digit OTP", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-secondary" id="resendOTP">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                    <small id="otpTimer" class="text-danger d-none"></small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="password"><i class="fas fa-lock me-1"></i> Password</label>
+                                    <div class="input-group">
+                                        {{ render_field(form.password, class="form-control", id="password", placeholder="Create a strong password", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="password-rules mt-3">
+                                        <small class="text-muted d-block mb-2">Password must contain:</small>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-check text-success me-2 d-none" id="lengthCheck"></i>
+                                                    <i class="fas fa-times text-danger me-2" id="lengthCross"></i>
+                                                    <small>At least 8 characters</small>
+                                                </div>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-check text-success me-2 d-none" id="upperCheck"></i>
+                                                    <i class="fas fa-times text-danger me-2" id="upperCross"></i>
+                                                    <small>One uppercase letter</small>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-check text-success me-2 d-none" id="lowerCheck"></i>
+                                                    <i class="fas fa-times text-danger me-2" id="lowerCross"></i>
+                                                    <small>One lowercase letter</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-check text-success me-2 d-none" id="numberCheck"></i>
+                                                    <i class="fas fa-times text-danger me-2" id="numberCross"></i>
+                                                    <small>One number</small>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-check text-success me-2 d-none" id="specialCheck"></i>
+                                                    <i class="fas fa-times text-danger me-2" id="specialCross"></i>
+                                                    <small>One special character</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="confirm_password"><i class="fas fa-lock me-1"></i> Confirm Password</label>
+                                    <div class="input-group">
+                                        {{ render_field(form.confirm_password, class="form-control", id="confirm_password", placeholder="Confirm your password", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="first_name"><i class="fas fa-user me-1"></i> First Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ render_field(form.first_name, class="form-control", id="first_name", placeholder="Enter your first name", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="last_name"><i class="fas fa-user me-1"></i> Last Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ render_field(form.last_name, class="form-control", id="last_name", placeholder="Enter your last name", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group date-field">
+                                    <label class="form-label" for="date_of_birth"><i class="fas fa-calendar me-1"></i> Date of Birth</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                                        {{ render_field(form.date_of_birth, class="form-control", id="date_of_birth", placeholder="YYYY-MM-DD", show_label=false) }}
+                                    </div>
+                                    <small class="text-muted d-block mt-1">Format: Year-Month-Day (e.g., 1990-01-15)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone"><i class="fas fa-phone me-1"></i> Phone Number <small class="text-muted">(optional)</small></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        {{ render_field(form.phone, class="form-control", id="phone", placeholder="Enter your phone number", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="form-check mb-4">
+                            <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                            <label class="form-check-label" for="termsCheck">
+                                I agree to the <a href="#" class="terms-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-user-plus me-2"></i> Create Account
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p>Already have an account? <a href="{{ url_for('login') }}" class="terms-link fw-bold">Login here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-file-contract me-2"></i> Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Account Registration</h6>
+                <p>You must provide accurate and complete information when creating an account.</p>
+                
+                <h6>2. User Responsibilities</h6>
+                <p>You are responsible for maintaining the confidentiality of your account credentials.</p>
+                
+                <h6>3. Content Ownership</h6>
+                <p>You retain ownership of designs you create but grant us license to produce the physical products.</p>
+                
+                <h6>4. Privacy Policy</h6>
+                <p>Your personal information will be handled according to our privacy policy.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // OTP functionality
+    let otpTimer = null;
+    let otpTimeLeft = 600; // 10 minutes (matches backend)
+
+
+    document.getElementById('sendOTP')?.addEventListener('click', function() {
+        const email = document.getElementById('email').value;
+        const emailField = document.getElementById('email');
+
+        if (!email) {
+            alert('Please enter your email first');
+            emailField.focus();
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        fetch('/send-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('OTP sent to your email!');
+                document.getElementById('email_otp').disabled = false;
+                startOTPTimer();
+            } else {
+                alert('Failed to send OTP: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to send OTP');
+        });
+    });
+
+
+
+    function startOTPTimer() {
+        const timerElement = document.getElementById('otpTimer');
+        const resendBtn = document.getElementById('resendOTP');
+        const sendBtn = document.getElementById('sendOTP');
+        
+        otpTimeLeft = 600;
+        timerElement.classList.remove('d-none');
+        sendBtn.disabled = true;
+        resendBtn.disabled = true;
+        
+        otpTimer = setInterval(() => {
+            otpTimeLeft--;
+            
+            const minutes = Math.floor(otpTimeLeft / 60);
+            const seconds = otpTimeLeft % 60;
+            timerElement.textContent = `Resend available in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (otpTimeLeft <= 0) {
+                clearInterval(otpTimer);
+                timerElement.classList.add('d-none');
+                sendBtn.disabled = false;
+                resendBtn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    document.getElementById('resendOTP')?.addEventListener('click', function() {
+        document.getElementById('sendOTP').click();
+    });
+
+    // Password validation
+    document.getElementById('password')?.addEventListener('input', function() {
+        const password = this.value;
+        const checks = {
+            length: password.length >= 8,
+            upper: /[A-Z]/.test(password),
+            lower: /[a-z]/.test(password),
+            number: /\d/.test(password),
+            special: /[@$!%*?&]/.test(password)
+        };
+        
+        for (const [key, value] of Object.entries(checks)) {
+            const checkIcon = document.getElementById(key + 'Check');
+            const crossIcon = document.getElementById(key + 'Cross');
+            if (value) {
+                checkIcon?.classList.remove('d-none');
+                crossIcon?.classList.add('d-none');
+            } else {
+                checkIcon?.classList.add('d-none');
+                crossIcon?.classList.remove('d-none');
+            }
+        }
+    });
+    
+    // Toggle password visibility
+    document.getElementById('togglePassword')?.addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        if (passwordInput) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        }
+    });
+    
+    // Toggle confirm password visibility
+    document.getElementById('toggleConfirmPassword')?.addEventListener('click', function() {
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        if (confirmPasswordInput) {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+        }
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form submission loading state
+        document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
+                submitBtn.disabled = true;
+            }
+        });
+    });
+</script>
+{% endblock %}

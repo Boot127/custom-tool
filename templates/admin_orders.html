@@ -1,0 +1,111 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Order Management - Admin Panel{% endblock %}
+
+{% block head %}
+<style>
+    .status-select {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .status-select:hover {
+        border-color: var(--primary-color, #007bff);
+    }
+    .status-form {
+        display: inline-block;
+    }
+    .status-select option[value="pending"] {
+        background-color: #ffc107;
+        color: #000;
+    }
+    .status-select option[value="processing"] {
+        background-color: #17a2b8;
+        color: #fff;
+    }
+    .status-select option[value="shipped"] {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .status-select option[value="delivered"] {
+        background-color: #28a745;
+        color: #fff;
+    }
+    .status-select option[value="cancelled"] {
+        background-color: #dc3545;
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-shopping-cart"></i> Order Management</h2>
+    <span class="badge bg-primary">{{ orders|length }} Orders</span>
+</div>
+
+{% if orders %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Full Name</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order[0] }}</td>
+                <td>{{ order[2] or order[3] }}</td>
+                <td>{{ order[4] }}</td>
+                <td>${{ "%.2f"|format(order[5]) }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin.update_order_status', order_id=order[0]) }}" class="d-inline status-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <select name="status" class="form-select form-select-sm status-select" onchange="this.form.submit()" style="min-width: 120px;">
+                            <option value="pending" {% if order[6] == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="processing" {% if order[6] == 'processing' %}selected{% endif %}>Processing</option>
+                            <option value="shipped" {% if order[6] == 'shipped' %}selected{% endif %}>Shipped</option>
+                            <option value="delivered" {% if order[6] == 'delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="cancelled" {% if order[6] == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </form>
+                </td>
+                <td>{{ order[7] }}</td>
+                <td>
+                    <a href="{{ url_for('admin.admin_order_detail', order_id=order[0]) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+    <h4>No Orders Found</h4>
+    <p class="text-muted">There are currently no orders in the system.</p>
+</div>
+{% endif %}
+
+<script>
+    // Add loading state when status is changed
+    document.querySelectorAll('.status-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const select = this.querySelector('.status-select');
+            if (select) {
+                select.disabled = true;
+                select.style.opacity = '0.6';
+                select.style.cursor = 'wait';
+            }
+        });
+    });
+</script>
+{% endblock %}

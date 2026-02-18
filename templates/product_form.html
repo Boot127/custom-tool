@@ -1,0 +1,353 @@
+<!-- Thylis, 251684J, group 4 -->
+{% extends "base_admin.html" %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block title %}{{ 'Edit' if action == 'edit' else 'Create' }} Product - Admin Panel{% endblock %}
+
+{% block head %}
+<style>
+    .product-form-container {
+        padding: 2rem 0;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e3e6f0;
+        padding: 2rem;
+        box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .image-upload {
+        border: 2px dashed #e3e6f0;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .image-upload:hover {
+        border-color: #4e73df;
+        background: #f8f9fc;
+    }
+    
+    .image-preview {
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 0 auto 1rem;
+        border: 1px solid #e3e6f0;
+    }
+    
+    .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .tag-input {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #e3e6f0;
+        border-radius: 8px;
+        min-height: 100px;
+    }
+    
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        background: #4e73df;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    
+    .tag-remove {
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .variants-table {
+        margin-top: 1rem;
+    }
+    
+    .variant-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f8f9fc;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-form-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-{{ 'edit' if action == 'edit' else 'plus' }}"></i> {{ 'Edit' if action == 'edit' else 'Create New' }} Product</h2>
+        <a href="{{ url_for('products.admin_products') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Back to Products
+        </a>
+    </div>
+    
+    <div class="form-card">
+        <form method="POST" action="" enctype="multipart/form-data" id="productForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h5 class="mb-3"><i class="fas fa-info-circle me-2"></i> Basic Information</h5>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" class="form-control" name="name" 
+                                   value="{{ product[1] if product else '' }}" 
+                                   required placeholder="Enter product name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="4" 
+                                      placeholder="Enter product description">{{ product[2] if product else '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Category *</label>
+                            <select class="form-select" name="category" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                <option value="{{ category }}" 
+                                        {% if product and product[3] == category %}selected{% endif %}>
+                                    {{ category|title }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Price ($) *</label>
+                            <input type="number" class="form-control" name="price" 
+                                   value="{{ product[4] if product else '' }}" 
+                                   step="0.01" min="0" required placeholder="0.00">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Stock Quantity *</label>
+                            <input type="number" class="form-control" name="stock" 
+                                   value="{{ product[5] if product else '0' }}" 
+                                   min="0" required placeholder="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Image -->
+            <div class="form-section">
+                <h5 class="mb-3"><i class="fas fa-image me-2"></i> Product Image</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="image-upload" onclick="document.getElementById('productImage').click()">
+                            <div id="imagePreview" class="image-preview">
+                                {% if product and product[8] %}
+                                {% if product[8].startswith('http://') or product[8].startswith('https://') %}
+                                <img src="{{ product[8] }}" alt="Current Image">
+                                {% else %}
+                                <img src="{{ url_for('static', filename=product[8]) }}" alt="Current Image">
+                                {% endif %}
+                                {% else %}
+                                <div class="d-flex align-items-center justify-content-center h-100">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="mb-2">Click to upload product image</p>
+                            <small class="text-muted">Recommended: 800x800px, JPG/PNG format</small>
+                        </div>
+                        <input type="file" class="d-none" id="productImage" name="image" accept="image/*" onchange="previewImage(event)">
+                        <div class="mt-3">
+                            <label class="form-label">Or enter image URL</label>
+                            <input type="url" class="form-control" id="productImageUrl" name="image_url" 
+                                   value="{{ product[8] if product and product[8] and not product[8].startswith('uploads/') else '' }}"
+                                   placeholder="https://example.com/image.jpg">
+                            <small class="text-muted">Leave empty if uploading a file above</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Available Colors</label>
+                            <input type="text" class="form-control" name="colors" 
+                                   value="{{ product[6] if product else '' }}" 
+                                   placeholder="Red,Blue,Green,Black,White (comma separated)">
+                            <small class="text-muted">Enter colors separated by commas</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Available Sizes</label>
+                            <input type="text" class="form-control" name="sizes" 
+                                   value="{{ product[7] if product else '' }}" 
+                                   placeholder="S,M,L,XL,XXL (comma separated)">
+                            <small class="text-muted">Enter sizes separated by commas</small>
+                        </div>
+                        
+                        {% if action == 'edit' %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_active" 
+                                   id="isActive" {% if product[10] == 1 %}checked{% endif %}>
+                            <label class="form-check-label" for="isActive">
+                                Product is active (visible to customers)
+                            </label>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Information -->
+            <div class="form-section">
+                <h5 class="mb-3"><i class="fas fa-cogs me-2"></i> Additional Information</h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">SKU (Stock Keeping Unit)</label>
+                            <input type="text" class="form-control" name="sku" 
+                                   value="{{ product.sku if product else '' }}" 
+                                   placeholder="PROD-001">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-control" name="weight" 
+                                   value="{{ product.weight if product else '0.5' }}" 
+                                   step="0.1" min="0" placeholder="0.5">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Dimensions (L x W x H in cm)</label>
+                            <input type="text" class="form-control" name="dimensions" 
+                                   value="{{ product.dimensions if product else '' }}" 
+                                   placeholder="30 x 20 x 5">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Material</label>
+                            <input type="text" class="form-control" name="material" 
+                                   value="{{ product.material if product else '' }}" 
+                                   placeholder="Cotton, Polyester, etc.">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEO Information -->
+            <div class="form-section">
+                <h5 class="mb-3"><i class="fas fa-search me-2"></i> SEO Information</h5>
+                
+                <div class="mb-3">
+                    <label class="form-label">Meta Title</label>
+                    <input type="text" class="form-control" name="meta_title" 
+                           value="{{ product.meta_title if product else '' }}" 
+                           placeholder="Optimized title for search engines">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Meta Description</label>
+                    <textarea class="form-control" name="meta_description" rows="2" 
+                              placeholder="Brief description for search results">{{ product.meta_description if product else '' }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Keywords</label>
+                    <input type="text" class="form-control" name="keywords" 
+                           value="{{ product.keywords if product else '' }}" 
+                           placeholder="keyword1, keyword2, keyword3">
+                    <small class="text-muted">Separate keywords with commas</small>
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    <i class="fas fa-times me-2"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> {{ 'Update' if action == 'edit' else 'Create' }} Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('imagePreview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+            // Clear URL input when file is selected
+            const urlInput = document.getElementById('productImageUrl');
+            if (urlInput) urlInput.value = '';
+        }
+    }
+    
+    // Handle image URL input
+    document.getElementById('productImageUrl')?.addEventListener('input', function(e) {
+        const url = e.target.value.trim();
+        const preview = document.getElementById('imagePreview');
+        
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+            preview.innerHTML = `<img src="${url}" alt="Preview" style="max-width:100%;max-height:100%;object-fit:contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100\\'><i class=\\'fas fa-exclamation-triangle fa-3x text-warning\\'></i></div>';">`;
+            // Clear file input when URL is entered
+            const fileInput = document.getElementById('productImage');
+            if (fileInput) fileInput.value = '';
+        } else if (!url) {
+            // Reset to default if URL is cleared
+            preview.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100"><i class="fas fa-cloud-upload-alt fa-3x text-muted"></i></div>';
+        }
+    });
+    
+    document.getElementById('productForm')?.addEventListener('submit', function(e) {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+            submitBtn.disabled = true;
+        }
+    });
+</script>
+{% endblock %}

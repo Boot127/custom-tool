@@ -1,0 +1,418 @@
+<!-- Thylis, 251684J, group 4 -->
+{% extends "base_admin.html" %}
+
+{% block title %}Product Management - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-box"></i> Product Management</h2>
+    <div>
+        <a href="{{ url_for('products.create_product') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Add New Product
+        </a>
+        <span class="badge bg-primary ms-2">{{ products|length }} Products</span>
+    </div>
+</div>
+
+<!-- Bulk Actions -->
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h6 class="mb-0"><i class="fas fa-tasks me-2"></i> Bulk Actions</h6>
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-sm btn-outline-primary" id="selectAllBtn">
+                    <i class="fas fa-check-square"></i> Select All
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" id="clearAllBtn">
+                    <i class="fas fa-square"></i> Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('products.bulk_product_actions') }}" id="bulkActionsForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <select class="form-select form-select-sm" name="bulk_action" id="bulkAction" required>
+                        <option value="">Choose action...</option>
+                        <option value="activate">Activate Selected</option>
+                        <option value="deactivate">Deactivate Selected</option>
+                        <option value="delete">Delete Selected</option>
+                    </select>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="submit" class="btn btn-sm btn-danger" id="applyBulkAction" disabled>
+                        <i class="fas fa-play"></i> Apply to Selected (<span id="selectedCount">0</span>)
+                    </button>
+                </div>
+                <div id="selectedProductsInputs"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <div class="row">
+            <div class="col-md-8">
+                <h5 class="mb-0"><i class="fas fa-boxes"></i> All Products</h5>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search products..." id="productSearch">
+                    <button class="btn btn-outline-light" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="productsTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th width="50">
+                            <input type="checkbox" id="selectAllCheckbox">
+                        </th>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr data-product-id="{{ product[0] }}">
+                        <td>
+                            <input type="checkbox" class="product-checkbox" name="selected_products" value="{{ product[0] }}">
+                        </td>
+                        <td>#{{ product[0] }}</td>
+                        <td>
+                            {% if product[8] and product[8]|trim %}
+                            {% if product[8].startswith('http://') or product[8].startswith('https://') %}
+                            <img src="{{ product[8] }}" alt="{{ product[1] }}" 
+                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"
+                                 onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            {% else %}
+                            <img src="{{ url_for('static', filename=product[8]) }}" alt="{{ product[1] }}" 
+                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"
+                                 onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            {% endif %}
+                            {% endif %}
+                            <div style="display:{% if product[8] and product[8]|trim %}none{% else %}flex{% endif %}; width: 50px; height: 50px; background: var(--neutral-cream); 
+                                      align-items: center; justify-content: center; border-radius: 8px;">
+                                <i class="fas fa-box text-muted"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <strong>{{ product[1] }}</strong>
+                            <p class="mb-0 text-muted small">{{ product[2][:50] }}...</p>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">{{ product[3]|title }}</span>
+                        </td>
+                        <td>${{ "%.2f"|format(product[4]) }}</td>
+                        <td>
+                            {% if product[5] > 10 %}
+                            <span class="badge bg-success">{{ product[5] }} in stock</span>
+                            {% elif product[5] > 0 %}
+                            <span class="badge bg-warning">{{ product[5] }} left</span>
+                            {% else %}
+                            <span class="badge bg-danger">Out of stock</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product[10] == 1 %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>{% if product[11] %}{{ (product[11]|string)[:10] }}{% else %}N/A{% endif %}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <!-- View -->
+                                <a href="{{ url_for('products.view_product', product_id=product[0]) }}" 
+                                   class="btn btn-outline-info" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                
+                                <!-- Edit -->
+                                <a href="{{ url_for('products.edit_product', product_id=product[0]) }}" 
+                                   class="btn btn-outline-primary" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
+                                <!-- Toggle Status -->
+                                <form method="POST" action="{{ url_for('products.toggle_product_status', product_id=product[0]) }}" 
+                                      class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline-{% if product[10] == 1 %}warning{% else %}success{% endif %}" 
+                                            title="{% if product[10] == 1 %}Deactivate{% else %}Activate{% endif %}">
+                                        <i class="fas fa-{% if product[10] == 1 %}ban{% else %}check{% endif %}"></i>
+                                    </button>
+                                </form>
+                                
+                                <!-- Delete -->
+                                <form method="POST" action="{{ url_for('products.delete_product', product_id=product[0]) }}" 
+                                      class="d-inline delete-product-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if not products %}
+        <div class="text-center py-5">
+            <i class="fas fa-box fa-3x text-muted mb-3"></i>
+            <h4>No Products Found</h4>
+            <p class="text-muted">Click "Add New Product" to create your first product.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-md-6">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i> Showing all products in the system
+                </small>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="button" class="btn btn-primary btn-sm" id="exportCSVBtn">
+                    <i class="fas fa-file-export"></i> Export to CSV
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Statistics -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="text-primary">{{ products|length }}</h4>
+                <small class="text-muted">Total Products</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="text-success">{{ active_count }}</h4>
+                <small class="text-muted">Active Products</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="text-warning">{{ categories|length }}</h4>
+                <small class="text-muted">Categories</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h4 class="text-danger">{{ out_of_stock_count }}</h4>
+                <small class="text-muted">Out of Stock</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const productSearchInput = document.getElementById('productSearch');
+        if (productSearchInput) {
+            productSearchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#productsTable tbody tr');
+                
+                rows.forEach(function(row) {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Delete confirmation
+        const deleteForms = document.querySelectorAll('.delete-product-form');
+        deleteForms.forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                const productName = this.closest('tr').querySelector('td:nth-child(4) strong').textContent;
+                
+                if (!confirm(`Are you sure you want to delete product "${productName}"?\n\nThis will permanently delete:\n• Product details\n• Product images\n• All associated data\n\nThis action cannot be undone!`)) {
+                    e.preventDefault();
+                    return false;
+                }
+                return true;
+            });
+        });
+        
+        // Bulk selection
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.product-checkbox');
+                checkboxes.forEach(function(cb) {
+                    cb.checked = this.checked;
+                }.bind(this));
+                updateBulkActionButton();
+            });
+        }
+        
+        // Update bulk action button
+        function updateBulkActionButton() {
+            const selectedCount = document.querySelectorAll('.product-checkbox:checked').length;
+            const btn = document.getElementById('applyBulkAction');
+            const countSpan = document.getElementById('selectedCount');
+            const bulkAction = document.getElementById('bulkAction');
+            
+            if (!btn || !countSpan || !bulkAction) return;
+            
+            countSpan.textContent = selectedCount;
+            
+            if (selectedCount > 0 && bulkAction.value) {
+                btn.disabled = false;
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-danger');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-secondary');
+            }
+        }
+        
+        // Listen to checkbox changes
+        document.querySelectorAll('.product-checkbox').forEach(function(cb) {
+            cb.addEventListener('change', updateBulkActionButton);
+        });
+        
+        // Bulk action selection
+        const bulkActionSelect = document.getElementById('bulkAction');
+        if (bulkActionSelect) {
+            bulkActionSelect.addEventListener('change', updateBulkActionButton);
+        }
+        
+        // Select All button
+        document.getElementById('selectAllBtn')?.addEventListener('click', function() {
+            document.querySelectorAll('.product-checkbox').forEach(function(cb) {
+                cb.checked = true;
+            });
+            document.getElementById('selectAllCheckbox').checked = true;
+            updateBulkActionButton();
+        });
+        
+        // Clear All button
+        document.getElementById('clearAllBtn')?.addEventListener('click', function() {
+            document.querySelectorAll('.product-checkbox').forEach(function(cb) {
+                cb.checked = false;
+            });
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateBulkActionButton();
+        });
+        
+        // Bulk action form submission
+        const bulkActionsForm = document.getElementById('bulkActionsForm');
+        if (bulkActionsForm) {
+            bulkActionsForm.addEventListener('submit', function(e) {
+                const selectedCount = document.querySelectorAll('.product-checkbox:checked').length;
+                const action = document.getElementById('bulkAction').value;
+                
+                if (selectedCount === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one product.');
+                    return;
+                }
+                
+                if (!action) {
+                    e.preventDefault();
+                    alert('Please select an action.');
+                    return;
+                }
+                
+                const actionText = {
+                    'activate': 'activate',
+                    'deactivate': 'deactivate',
+                    'delete': 'delete'
+                }[action] || 'process';
+                
+                if (!confirm(`Are you sure you want to ${actionText} ${selectedCount} selected product(s)?`)) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+            });
+        }
+        
+        // Export to CSV
+        document.getElementById('exportCSVBtn')?.addEventListener('click', exportToCSV);
+        
+        function exportToCSV() {
+            const rows = document.querySelectorAll('#productsTable tbody tr');
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add headers
+            const headers = ['ID', 'Name', 'Category', 'Price', 'Stock', 'Status', 'Created'];
+            csvContent += headers.join(',') + "\n";
+            
+            // Add data rows
+            rows.forEach(function(row) {
+                if (row.style.display !== 'none') {
+                    const cells = row.querySelectorAll('td');
+                    const rowData = [
+                        cells[1] ? cells[1].textContent.trim() : '',
+                        cells[3] ? cells[3].querySelector('strong')?.textContent.trim() : '',
+                        cells[4] ? cells[4].querySelector('.badge')?.textContent.trim() : '',
+                        cells[5] ? cells[5].textContent.trim() : '',
+                        cells[6] ? cells[6].querySelector('.badge')?.textContent.trim() : '',
+                        cells[7] ? cells[7].querySelector('.badge')?.textContent.trim() : '',
+                        cells[8] ? cells[8].textContent.trim() : ''
+                    ];
+                    csvContent += rowData.map(function(cell) { 
+                        return '"' + cell.replace(/"/g, '""') + '"'; 
+                    }).join(',') + "\n";
+                }
+            });
+            
+            // Create download link
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `products_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    });
+</script>
+{% endblock %}

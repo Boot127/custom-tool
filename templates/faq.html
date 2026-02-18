@@ -1,0 +1,481 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+
+{% block title %}FAQ - DesignCraft Studio{% endblock %}
+
+{% block head %}
+<style>
+    .faq-container {
+        padding: 2rem 0;
+    }
+    
+    .search-section {
+        background: var(--gradient-natural);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .search-input-group {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .search-input {
+        border-radius: 50px;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        border: 2px solid var(--wood-light);
+    }
+    
+    .search-btn {
+        border-radius: 50px;
+        padding: 0 2rem;
+        margin-left: 1rem;
+    }
+    
+    .faq-layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+    }
+    
+    @media (max-width: 992px) {
+        .faq-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .categories-sidebar {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid var(--wood-light);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+    
+    .category-item {
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+    
+    .category-item:hover {
+        background: var(--neutral-cream);
+    }
+    
+    .category-item.active {
+        background: var(--gradient-sage);
+        color: white;
+    }
+    
+    .category-icon {
+        width: 30px;
+        margin-right: 10px;
+        text-align: center;
+    }
+    
+    .hot-faqs-section {
+        margin-bottom: 3rem;
+    }
+    
+    .section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--sage-green);
+    }
+    
+    .section-title i {
+        font-size: 1.5rem;
+        color: var(--sage-green);
+        margin-right: 10px;
+    }
+    
+    .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .faq-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--wood-light);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .faq-card:hover {
+        box-shadow: 0 10px 30px rgba(154, 175, 136, 0.15);
+        border-color: var(--sage-green);
+        transform: translateY(-2px);
+    }
+    
+    .faq-header {
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .faq-question {
+        font-weight: 600;
+        margin: 0;
+        color: var(--wood-dark);
+        flex: 1;
+    }
+    
+    .faq-hot-badge {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 1rem;
+    }
+    
+    .faq-answer {
+        padding: 0 1.5rem 1.5rem;
+        color: var(--neutral-dark);
+        line-height: 1.6;
+    }
+    
+    .faq-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--wood-light);
+        font-size: 0.9rem;
+    }
+    
+    .faq-helpful {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .helpful-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .helpful-btn:hover {
+        background: var(--neutral-cream);
+    }
+    
+    .helpful-count {
+        font-weight: 600;
+        color: var(--sage-green);
+    }
+    
+    .faq-views {
+        color: var(--neutral-dark);
+        opacity: 0.7;
+    }
+    
+    .faq-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+    
+    .related-link {
+        color: var(--sage-green);
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .related-link:hover {
+        text-decoration: underline;
+    }
+    
+    .still-need-help {
+        background: var(--gradient-wood);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 3rem;
+        text-align: center;
+        border: 1px solid var(--wood-light);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-container">
+    <div class="search-section">
+        <div class="text-center mb-4">
+            <h2><i class="fas fa-question-circle me-2"></i>How can we help you?</h2>
+            <p class="text-muted">Search our knowledge base for answers to common questions</p>
+        </div>
+        
+        <div class="search-input-group">
+            <div class="input-group">
+                <input type="text" class="form-control search-input" placeholder="Search FAQs, orders, returns, shipping..." id="faqSearch">
+                <button class="btn btn-primary search-btn" id="searchBtn">
+                    <i class="fas fa-search me-2"></i>Search
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="faq-layout">
+        <!-- Categories Sidebar -->
+        <div class="categories-sidebar">
+            <h5 class="mb-3">Browse by Category</h5>
+            {% for category in categories %}
+            <div class="category-item {% if loop.first %}active{% endif %}" 
+                 data-category="{{ category.id }}">
+                <div class="category-icon">
+                    <i class="{{ category.icon }}"></i>
+                </div>
+                <span>{{ category.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Main Content -->
+        <div class="faq-content">
+            <!-- Hot FAQs -->
+            <div class="hot-faqs-section">
+                <div class="section-title">
+                    <i class="fas fa-fire"></i>
+                    <h4 class="mb-0">Hot FAQs</h4>
+                </div>
+                
+                <div class="faq-grid">
+                    {% for faq in hot_faqs %}
+                    <div class="faq-card" data-faq-id="{{ faq.id }}">
+                        <div class="faq-header">
+                            <h6 class="faq-question">{{ faq.question }}</h6>
+                            <span class="faq-hot-badge">Hot</span>
+                        </div>
+                        
+                        <div class="faq-answer d-none">
+                            <p>{{ faq.answer }}</p>
+                            
+                            {% if faq.category == 'sizing' %}
+                            <div class="faq-actions">
+                                <a href="#" class="related-link">
+                                    <i class="fas fa-ruler me-1"></i> View Size Chart
+                                </a>
+                                <a href="#" class="related-link">
+                                    <i class="fas fa-download me-1"></i> Download Tech Pack
+                                </a>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="faq-meta">
+                                <div class="faq-helpful">
+                                    <span>Was this helpful?</span>
+                                    <button class="helpful-btn" data-helpful="true">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </button>
+                                    <button class="helpful-btn" data-helpful="false">
+                                        <i class="fas fa-thumbs-down"></i>
+                                    </button>
+                                    <span class="helpful-count">{{ faq.helpful }}%</span>
+                                </div>
+                                <div class="faq-views">
+                                    <i class="fas fa-eye me-1"></i> {{ faq.views }} views
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- All FAQs -->
+            <div class="all-faqs-section">
+                <div class="section-title">
+                    <i class="fas fa-list"></i>
+                    <h4 class="mb-0">All Questions</h4>
+                </div>
+                
+                <div class="faq-grid">
+                    {% for faq in all_faqs %}
+                    <div class="faq-card" data-faq-id="{{ faq.id }}" data-category="{{ faq.category }}">
+                        <div class="faq-header">
+                            <h6 class="faq-question">{{ faq.question }}</h6>
+                        </div>
+                        
+                        <div class="faq-answer d-none">
+                            <p>{{ faq.answer }}</p>
+                            
+                            <div class="faq-meta">
+                                <div class="faq-helpful">
+                                    <span>Was this helpful?</span>
+                                    <button class="helpful-btn" data-helpful="true">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </button>
+                                    <button class="helpful-btn" data-helpful="false">
+                                        <i class="fas fa-thumbs-down"></i>
+                                    </button>
+                                </div>
+                                <div class="text-muted">
+                                    <small>Last updated: Jan 2024</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Still Need Help Section -->
+            <div class="still-need-help">
+                <h4>Still need help?</h4>
+                <p class="mb-3">Can't find what you're looking for? Our support team is ready to help!</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('contact_us') }}" class="btn btn-primary">
+                        <i class="fas fa-envelope me-2"></i>Contact Us
+                    </a>
+                    <a href="{{ url_for('contact_us') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FAQ card expand/collapse
+        document.querySelectorAll('.faq-card').forEach(card => {
+            const header = card.querySelector('.faq-header');
+            const answer = card.querySelector('.faq-answer');
+            
+            header.addEventListener('click', function() {
+                answer.classList.toggle('d-none');
+                
+                // Close other FAQs when opening one
+                if (!answer.classList.contains('d-none')) {
+                    document.querySelectorAll('.faq-card').forEach(otherCard => {
+                        if (otherCard !== card) {
+                            otherCard.querySelector('.faq-answer')?.classList.add('d-none');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Category filtering
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active state
+                document.querySelectorAll('.category-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                
+                // Filter FAQs
+                document.querySelectorAll('.faq-card').forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Helpful feedback
+        document.querySelectorAll('.helpful-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.faq-card');
+                const faqId = card.dataset.faqId;
+                const helpful = this.dataset.helpful === 'true';
+                
+                // Send feedback to server
+                fetch('/api/faq/helpful', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content
+                    },
+                    body: JSON.stringify({
+                        faq_id: faqId,
+                        helpful: helpful
+                    })
+                });
+                
+                // Visual feedback
+                const helpfulCount = card.querySelector('.helpful-count');
+                if (helpfulCount) {
+                    const currentCount = parseInt(helpfulCount.textContent);
+                    helpfulCount.textContent = `${helpful ? currentCount + 1 : currentCount - 1}%`;
+                }
+                
+                // Disable buttons after voting
+                card.querySelectorAll('.helpful-btn').forEach(b => {
+                    b.disabled = true;
+                    b.style.opacity = '0.5';
+                });
+                
+                // Show thank you message
+                const helpfulDiv = card.querySelector('.faq-helpful');
+                const thankYou = document.createElement('small');
+                thankYou.className = 'text-success ms-2';
+                thankYou.textContent = 'Thanks for your feedback!';
+                helpfulDiv.appendChild(thankYou);
+                
+                setTimeout(() => thankYou.remove(), 3000);
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('faqSearch');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        function performSearch() {
+            const query = searchInput.value.toLowerCase();
+            
+            document.querySelectorAll('.faq-card').forEach(card => {
+                const question = card.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = card.querySelector('.faq-answer p')?.textContent.toLowerCase() || '';
+                
+                if (question.includes(query) || answer.includes(query)) {
+                    card.style.display = 'block';
+                    // Highlight matching text
+                    if (query) {
+                        const regex = new RegExp(`(${query})`, 'gi');
+                        card.querySelector('.faq-question').innerHTML = 
+                            card.querySelector('.faq-question').textContent.replace(regex, '<mark>$1</mark>');
+                    }
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    });
+</script>
+{% endblock %}

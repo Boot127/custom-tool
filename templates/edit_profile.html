@@ -1,0 +1,321 @@
+<!-- Yong jun , 252176E , group 4  -->
+{% extends "base.html" %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block title %}Edit Profile - DesignCraft Studio{% endblock %}
+
+{% block head %}
+<style>
+    .edit-profile-container {
+        padding: 2rem 0;
+    }
+    
+    .edit-profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(166, 138, 100, 0.15);
+        overflow: hidden;
+        border: 1px solid var(--wood-light);
+    }
+    
+    .edit-profile-header {
+        background: var(--gradient-wood);
+        color: var(--neutral-dark);
+        padding: 2rem;
+        position: relative;
+    }
+    
+    .edit-profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-sage);
+    }
+    
+    .edit-profile-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--sage-green);
+    }
+    
+    .edit-profile-body {
+        padding: 2.5rem;
+    }
+    
+    .input-group-text {
+        background: var(--wood-light);
+        border: 2px solid var(--wood-light);
+        color: var(--wood-dark);
+    }
+    
+    .date-field .form-control {
+        font-family: monospace;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="edit-profile-card fade-in">
+                <div class="edit-profile-header">
+                    <div class="edit-profile-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <h3>Edit Your Profile</h3>
+                    <p class="mb-0">Update your personal information</p>
+                </div>
+                
+                <div class="edit-profile-body">
+                    <form method="POST" action="{{ url_for('edit_profile') }}" id="editProfileForm">
+                        {{ form.hidden_tag() }}  <!-- CSRF Token -->
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="username"><i class="fas fa-user-tag me-1"></i> Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                        {{ render_field(form.username, class="form-control", id="username", placeholder="Enter your username", show_label=false) }}
+                                    </div>
+                                    <small class="text-muted">Username can only contain letters, numbers, and underscores</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="email"><i class="fas fa-envelope me-1"></i> Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        {{ render_field(form.email, class="form-control", id="email", placeholder="Enter your email", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-primary" id="sendEmailOTP" style="display:none;">
+                                            <i class="fas fa-paper-plane"></i> Send OTP
+                                        </button>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">If you change your email, you'll need to verify it with an OTP</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- OTP Verification Section (shown when email changes) -->
+                        <div class="row mb-3" id="otpSection" style="display: none;">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="email_otp"><i class="fas fa-shield-alt me-1"></i> Email Verification Code</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-shield-alt"></i></span>
+                                        {{ render_field(form.email_otp, class="form-control", id="email_otp", placeholder="Enter 6-digit OTP", show_label=false) }}
+                                        <button type="button" class="btn btn-outline-secondary" id="resendEmailOTP">
+                                            <i class="fas fa-redo"></i> Resend
+                                        </button>
+                                    </div>
+                                    <small id="otpTimer" class="text-danger d-none"></small>
+                                    <small class="text-muted d-block mt-1">Check your email for the verification code</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="first_name"><i class="fas fa-user me-1"></i> First Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ render_field(form.first_name, class="form-control", id="first_name", placeholder="Enter your first name", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="last_name"><i class="fas fa-user me-1"></i> Last Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ render_field(form.last_name, class="form-control", id="last_name", placeholder="Enter your last name", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group date-field">
+                                    <label class="form-label" for="date_of_birth"><i class="fas fa-calendar me-1"></i> Date of Birth</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-birthday-cake"></i></span>
+                                        {{ render_field(form.date_of_birth, class="form-control", id="date_of_birth", placeholder="YYYY-MM-DD", show_label=false) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone"><i class="fas fa-phone me-1"></i> Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        {{ render_field(form.phone, class="form-control", id="phone", placeholder="Enter phone number (numbers only)", show_label=false) }}
+                                    </div>
+                                    <small class="text-muted">Phone number can only contain numbers, +, -, spaces, and parentheses</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label class="form-label" for="address"><i class="fas fa-map-marker-alt me-1"></i> Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                {{ render_field(form.address, class="form-control", id="address", placeholder="Enter your address", show_label=false, rows="3") }}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Save Changes
+                            </button>
+                            <a href="{{ url_for('profile') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Store original email
+    const originalEmail = '{{ original_email|e }}';
+    let emailOTPTimer = null;
+    let emailOTPTimeLeft = 600; // 10 minutes
+    
+    // Phone number validation - only allow numbers, +, -, spaces, parentheses
+    document.getElementById('phone')?.addEventListener('input', function(e) {
+        // Remove any characters that aren't numbers, +, -, spaces, or parentheses
+        this.value = this.value.replace(/[^0-9+\-\s()]/g, '');
+    });
+    
+    // Check if email changed and show OTP section
+    document.getElementById('email')?.addEventListener('input', function(e) {
+        const emailValue = this.value.toLowerCase().trim();
+        const emailChanged = emailValue !== originalEmail.toLowerCase();
+        const sendOTPBtn = document.getElementById('sendEmailOTP');
+        const otpSection = document.getElementById('otpSection');
+        
+        if (emailChanged && emailValue.includes('@') && emailValue.includes('.')) {
+            sendOTPBtn.style.display = 'inline-block';
+            otpSection.style.display = 'block';
+            // Clear OTP field when email changes
+            document.getElementById('email_otp').value = '';
+        } else {
+            sendOTPBtn.style.display = 'none';
+            if (!emailChanged) {
+                otpSection.style.display = 'none';
+            }
+        }
+    });
+    
+    // Send OTP for email verification
+    document.getElementById('sendEmailOTP')?.addEventListener('click', function() {
+        const email = document.getElementById('email').value.trim();
+        
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            alert('Please enter a valid email address');
+            return;
+        }
+        
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        
+        fetch('/profile/send-email-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('OTP sent to your email!');
+                document.getElementById('email_otp').disabled = false;
+                startEmailOTPTimer();
+            } else {
+                alert('Failed to send OTP: ' + data.message);
+            }
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to send OTP');
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+        });
+    });
+    
+    // Resend OTP
+    document.getElementById('resendEmailOTP')?.addEventListener('click', function() {
+        document.getElementById('sendEmailOTP').click();
+    });
+    
+    // OTP Timer
+    function startEmailOTPTimer() {
+        const timerElement = document.getElementById('otpTimer');
+        const resendBtn = document.getElementById('resendEmailOTP');
+        const sendBtn = document.getElementById('sendEmailOTP');
+        
+        if (emailOTPTimer) clearInterval(emailOTPTimer);
+        
+        emailOTPTimeLeft = 600;
+        timerElement.classList.remove('d-none');
+        resendBtn.disabled = true;
+        
+        emailOTPTimer = setInterval(() => {
+            emailOTPTimeLeft--;
+            
+            const minutes = Math.floor(emailOTPTimeLeft / 60);
+            const seconds = emailOTPTimeLeft % 60;
+            timerElement.textContent = `OTP expires in ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (emailOTPTimeLeft <= 0) {
+                clearInterval(emailOTPTimer);
+                timerElement.textContent = 'OTP expired. Please request a new one.';
+                resendBtn.disabled = false;
+            }
+        }, 1000);
+    }
+    
+    // Show OTP section if email was changed (from server-side validation)
+    {% if email_changed %}
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('sendEmailOTP').style.display = 'inline-block';
+        document.getElementById('otpSection').style.display = 'block';
+    });
+    {% endif %}
+    
+    // Form submission loading state
+    document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+        const emailValue = document.getElementById('email').value.toLowerCase().trim();
+        const emailChanged = emailValue !== originalEmail.toLowerCase();
+        
+        // If email changed, require OTP
+        if (emailChanged) {
+            const otpValue = document.getElementById('email_otp').value.trim();
+            if (!otpValue || otpValue.length !== 6) {
+                e.preventDefault();
+                alert('Please enter the 6-digit OTP code sent to your new email address.');
+                document.getElementById('email_otp').focus();
+                return false;
+            }
+        }
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saving Changes...';
+            submitBtn.disabled = true;
+        }
+    });
+</script>
+{% endblock %}
